@@ -1,0 +1,2 @@
+rootProject.name='SmartTracker'
+include ':app'
