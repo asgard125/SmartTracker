@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">SmartTracker</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_up">Sign up</string>
+    <string name="registration">Registration</string>
+    <string name="main_screen">Main Screen</string>
+    <string name="goals">Goals</string>
+    <string name="habits">Habits</string>
+    <string name="rating">Rating</string>
+    <string name="settings">Settings</string>
+    <string name="oper_drawer">Open navigation drawer</string>
+    <string name="close_drawer">Close navigation drawer</string>
 </resources>

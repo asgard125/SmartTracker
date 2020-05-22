@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id = "@+id/MainFragmentItem"
+            android:title = "@string/main_screen"/>
+        <item
+            android:id = "@+id/GoalsFragmentItem"
+            android:title = "@string/goals"/>
+        <item
+            android:id = "@+id/HabitsFragmentItem"
+            android:title = "@string/habits"/>
+        <item
+            android:id = "@+id/RatingFragmentItem"
+            android:title = "@string/rating"/>
+        <item
+            android:id = "@+id/SettingsFragmentItem"
+            android:title = "@string/settings"/>
+    </group>
+
+</menu>
