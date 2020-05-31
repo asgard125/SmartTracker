@@ -2,7 +2,6 @@ from flask_restful import reqparse, abort, Resource
 from flask import jsonify
 from data import db_session
 from data.__all_models import User
-from werkzeug.security import generate_password_hash
 
 db_session.global_init("db/smarttrackerdb.sqlite")
 
@@ -41,19 +40,5 @@ class UserListResource(Resource):
         session = db_session.create_session()
         users = session.query(User).all()
         return jsonify({'user': [user.to_dict(
-            only=('id', 'name', 'email')) for user in users]})
+            only=('id', 'name', 'email', 'api_key', 'rating')) for user in users]})
 
-    def post(self):
-        args = parser.parse_args()
-        session = db_session.create_session()
-        check_user = session.query(User).filter(User.email == args['email']).first()
-        if check_user:
-            abort(405, message='User with this email already exists')
-        user = User(
-            name=args['name'],
-            email=args['email'],
-            password=generate_password_hash(args['password'])
-        )
-        session.add(user)
-        session.commit()
-        return jsonify({'result': 'OK'})
