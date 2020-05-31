@@ -4,5 +4,4 @@ flask-wtf
 flask-restful
 sqlalchemy
 requests
-werkzeug.security
 SQLAlchemy-serializer
