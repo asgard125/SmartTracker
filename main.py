@@ -57,4 +57,4 @@ api.add_resource(user_api.UserListResource, '/api/users')
 api.add_resource(user_api.UserResource, '/api/user/<int:id>')
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=int(os.environ.get("PORT", 8080)))
+    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
