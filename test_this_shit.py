@@ -10,6 +10,6 @@ shit = '''{"name": "genadiy",
                  "password": "123"}'''
 shit1 = '''{"email": "asgard1@ori.ru",
                  "password": "123"}'''
-print(get('http://127.0.0.1:8080/api/users').json())
-print(get('http://127.0.0.1:8080/api/login',
-           json=json.loads(shit1)).json())
+print(get('https://smarttracker.herokuapp.com/api/users'))
+# print(get('http://127.0.0.1:8080/api/login',
+#            json=json.loads(shit1)).json())
