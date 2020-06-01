@@ -8,6 +8,9 @@ from werkzeug.security import check_password_hash
 import random
 from data import db_session
 
+db_session.global_init("db/stdb.sqlite")
+
+
 def random_name():
     symbols = list('qwertyuiopasdfghjklzxcvbnm1234567890QWERTYUIOPASDFGHJKLZXCVBNM')
     length = random.randint(5, 16)
@@ -31,7 +34,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
         return check_password_hash(self.password, password)
 
     def generate_api_key(self):
-        session = session = db_session.create_session()
+        session = db_session.create_session()
         user = session.query(User).filter(User.id == self.id).first()
         self.api_key = random_name() + str(self.id)
         user.api_key = self.api_key

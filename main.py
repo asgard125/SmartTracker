@@ -12,7 +12,12 @@ from werkzeug.security import check_password_hash, generate_password_hash
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'megumin'
 api = Api(app)
+db_session.global_init("db/stdb.sqlite")
 
+
+@app.route('/', methods=['GET'])
+def check():
+    return "Hello world"
 
 @app.route('/api/register', methods=['POST'])
 def register():
@@ -43,7 +48,6 @@ def login():
     args = parser.parse_args()
     session = db_session.create_session()
     user = session.query(User).filter(User.email == args['email']).first()
-    print(user.password)
     if user and user.check_password(args['password']):
         return jsonify({'result': 'OK', 'api_key': user.generate_api_key()})
     return jsonify({'result': 'Fail'})
@@ -53,4 +57,4 @@ api.add_resource(user_api.UserListResource, '/api/users')
 api.add_resource(user_api.UserResource, '/api/user/<int:id>')
 
 if __name__ == '__main__':
-    app.run(port=8080, host='127.0.0.1', debug=True)
+    app.run(port=8080, host='127.0.0.1')

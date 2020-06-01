@@ -5,3 +5,4 @@ flask-restful
 sqlalchemy
 requests
 SQLAlchemy-serializer
+werkzeug
