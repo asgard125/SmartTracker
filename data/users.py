@@ -8,8 +8,6 @@ from werkzeug.security import check_password_hash
 import random
 from data import db_session
 
-db_session.global_init("db/stdb.sqlite")
-
 
 def random_name():
     symbols = list('qwertyuiopasdfghjklzxcvbnm1234567890QWERTYUIOPASDFGHJKLZXCVBNM')
@@ -38,6 +36,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
         user = session.query(User).filter(User.id == self.id).first()
         self.api_key = random_name() + str(self.id)
         user.api_key = self.api_key
+        session.commit()
         return self.api_key
 
     def delete_api_key(self):

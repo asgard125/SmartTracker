@@ -3,7 +3,6 @@ from flask import jsonify
 from data import db_session
 from data.__all_models import User
 
-db_session.global_init("db/stdb.sqlite")
 
 parser = reqparse.RequestParser()
 parser.add_argument("email", required=True)
