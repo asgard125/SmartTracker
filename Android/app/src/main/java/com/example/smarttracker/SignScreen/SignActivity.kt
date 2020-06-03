@@ -20,11 +20,11 @@ class SignActivity : AppCompatActivity(), FragmentCallback{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign)
-        supportFragmentManager.beginTransaction().add(R.id.SignContainer, SignInFragment()).commit()
+        supportFragmentManager.beginTransaction().add(R.id.SignContainer, SignInFragment(), "SignIn").commit()
     }
 
     override fun setSignUpFragment() {
-        supportFragmentManager.beginTransaction().replace(R.id.SignContainer, SignUpFragment()).addToBackStack(null).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.SignContainer, SignUpFragment(), "SignUp").addToBackStack(null).commit()
     }
 
     override fun signIn() {
@@ -32,4 +32,7 @@ class SignActivity : AppCompatActivity(), FragmentCallback{
         startActivity(intent)
     }
 
+    override fun setSignInInfo(email: String, password: String) {
+        (supportFragmentManager.findFragmentByTag("SignIn") as SignInFragment).setEmailAndPassword(email, password)
+    }
 }

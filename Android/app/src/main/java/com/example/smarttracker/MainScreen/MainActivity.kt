@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
 
-        val drawerButton = ActionBarDrawerToggle(this, drawer, toolbar, R.string.oper_drawer, R.string.close_drawer)
+        val drawerButton = ActionBarDrawerToggle(this, drawer, toolbar, R.string.open_drawer, R.string.close_drawer)
         drawer.addDrawerListener(drawerButton)
         drawerButton.syncState()
 

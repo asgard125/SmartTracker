@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SmartTracker</string>
+    <string name="app_name">Smart Tracker</string>
     <string name="sign_in">Sign in</string>
     <string name="sign_up">Sign up</string>
     <string name="registration">Registration</string>
@@ -8,6 +8,15 @@
     <string name="habits">Habits</string>
     <string name="rating">Rating</string>
     <string name="settings">Settings</string>
-    <string name="oper_drawer">Open navigation drawer</string>
+    <string name="open_drawer">Open navigation drawer</string>
     <string name="close_drawer">Close navigation drawer</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="back_button">Back Button</string>
+    <string name="nickname">Nickname</string>
+    <string name="verify_password">Verify password</string>
+    <string name="loading">Loading</string>
+    <string name="sign_in_error">Invalid email and/or password</string>
+    <string name="registration_failed">Registration failed</string>
+    <string name="verify_password_error">Passwords mismatch</string>
 </resources>
