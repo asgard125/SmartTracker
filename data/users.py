@@ -3,7 +3,6 @@ from sqlalchemy import orm
 from .db_session import SqlAlchemyBase
 from flask_login import UserMixin
 from sqlalchemy_serializer import SerializerMixin
-from hashlib import md5
 from werkzeug.security import check_password_hash
 import random
 from data import db_session
@@ -34,10 +33,14 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     def generate_api_key(self):
         session = db_session.create_session()
         user = session.query(User).filter(User.id == self.id).first()
-        self.api_key = random_name() + str(self.id)
+        self.api_key = random_name() + '_' + str(self.id)
         user.api_key = self.api_key
         session.commit()
         return self.api_key
 
     def delete_api_key(self):
+        session = db_session.create_session()
+        user = session.query(User).filter(User.id == self.id).first()
         self.api_key = None
+        user.api_key = self.api_key
+        session.commit()

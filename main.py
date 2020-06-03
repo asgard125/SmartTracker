@@ -19,7 +19,8 @@ db_session.global_init("db/stdb.sqlite")
 def check():
     return "Hello world"
 
-@app.route('/api/register', methods=['POST'])
+
+@app.route('/register', methods=['POST'])
 def register():
     parser = reqparse.RequestParser()
     parser.add_argument("email", required=True)
@@ -29,7 +30,7 @@ def register():
     session = db_session.create_session()
     check_user = session.query(User).filter(User.email == args['email']).first()
     if check_user:
-        abort(405, message='User with this email already exists')
+        return jsonify({'result': 'Fail', 'message': 'user with this email already exists'})
     user = User(
         name=args['name'],
         email=args['email'],
@@ -40,7 +41,7 @@ def register():
     return jsonify({'result': 'OK'})
 
 
-@app.route('/api/login', methods=['GET'])
+@app.route('/login', methods=['GET'])
 def login():
     parser = reqparse.RequestParser()
     parser.add_argument("email", required=True)
@@ -53,8 +54,9 @@ def login():
     return jsonify({'result': 'Fail'})
 
 
-api.add_resource(user_api.UserListResource, '/api/users')
-api.add_resource(user_api.UserResource, '/api/user/<int:id>')
+api.add_resource(user_api.UserListResource, '/api/v1/users')
+api.add_resource(user_api.UserResource, '/api/v1/user/<int:id>')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
+#  app.run(host='127.0.0.1', port=int(os.environ.get("PORT", 8080)), debug=True)

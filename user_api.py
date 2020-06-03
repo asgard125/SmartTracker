@@ -4,10 +4,12 @@ from data import db_session
 from data.__all_models import User
 
 
-parser = reqparse.RequestParser()
-parser.add_argument("email", required=True)
-parser.add_argument("name", required=True)
-parser.add_argument("password", required=True)
+def check_api_key(api_key):
+    session = db_session.create_session()
+    user = session.query(User).get(api_key)
+    if user is None:
+        abort(403, message="Invalid api key")
+    return user
 
 
 def abort_if_user_not_found(id):
@@ -19,25 +21,25 @@ def abort_if_user_not_found(id):
 
 class UserResource(Resource):
     def get(self, id):
+        parser = reqparse.RequestParser()
+        parser.add_argument("info_type", required=False)  # public/private, default=public
+        parser.add_argument("api_key", required=True)
+        args = parser.parse_args()
+        check_api_key(args['api_key'])
         abort_if_user_not_found(id)
         session = db_session.create_session()
         user = session.query(User).get(id)
         return jsonify({'user': user.to_dict(
-            only=('id', 'name', 'email'))})
-
-    def delete(self, user_id):
-        abort_if_user_not_found(user_id)
-        session = db_session.create_session()
-        user = session.query(User).get(user_id)
-        session.delete(user)
-        session.commit()
-        return jsonify({'result': 'OK'})
+            only=('id', 'name', 'rating'))})
 
 
 class UserListResource(Resource):
     def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument("api_key", required=True)
+        args = parser.parse_args()
+        check_api_key(args['api_key'])
         session = db_session.create_session()
         users = session.query(User).all()
-        return jsonify({'user': [user.to_dict(
+        return jsonify({'users': [user.to_dict(
             only=('id', 'name', 'email', 'api_key', 'rating')) for user in users]})
-
