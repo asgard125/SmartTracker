@@ -8,14 +8,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import com.example.smarttracker.Objects.Constants
-import com.example.smarttracker.Objects.SHA256
 import com.example.smarttracker.R
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
-import java.io.IOException
+import java.lang.Exception
 
 class SignUpAsyncTask(private val context : Context?,
                       private val fragmentManager: FragmentManager,
@@ -38,17 +37,16 @@ class SignUpAsyncTask(private val context : Context?,
 
         publishProgress(context?.getText(R.string.loading).toString())
 
-        val hash = SHA256.hash(password)
-        val map = mapOf("nickname" to nickname, "email" to email, "password" to hash)
-        val json = JSONObject(map)
-        Log.d("Glipko", "Json is $json")
+        //val hash = SHA256.hash(password)
+        val map = mapOf("name" to nickname, "email" to email, "password" to password)
+        var json = JSONObject(map)
 
-        /*val client = OkHttpClient()
+        val client = OkHttpClient()
         val type = "application/json".toMediaTypeOrNull()
         val body = json.toString().toRequestBody(type)
 
         val request = Request.Builder()
-            .url(Constants.SERVER_URL)
+            .url(Constants.SIGN_UP_URL)
             .post(body)
             .build()
         val response = client.newCall(request).execute()
@@ -56,14 +54,13 @@ class SignUpAsyncTask(private val context : Context?,
         val resultCode = response.code
 
         if(resultCode == Constants.OK_CODE){
+            json = JSONObject(response.body?.string())
+            if(json.getString(Constants.RESULT) == "Fail"){
+                return false
+            }
             return true
         }
-        if(resultCode == Constants.NOT_ALLOWED_CODE){
-            return false
-        }
-        throw Exception("There is no such code")*/
-
-        return true
+        throw Exception("There is no such code")
     }
 
     override fun onProgressUpdate(vararg values: String) {

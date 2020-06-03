@@ -2,6 +2,7 @@ package com.example.smarttracker.SignScreen
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.AsyncTask
 import android.util.Log
 import android.widget.TextView
@@ -14,6 +15,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
+import java.lang.Exception
 
 class SignInAsyncTask(private val context : Context?,
                       private val callback: FragmentCallback) : AsyncTask<String, String, Boolean>(){
@@ -36,36 +38,34 @@ class SignInAsyncTask(private val context : Context?,
         val email = params[0]
         val password = params[1]
 
-        val hash = SHA256.hash(password)
-        val map = mapOf("email" to email, "password" to hash)
-        val json = JSONObject(map)
-        Log.d("Glipko", "Json is $json")
+        //val hash = SHA256.hash(password)
+        //val map = mapOf("email" to email, "password" to password)
+        //var json = JSONObject(map)
 
-        /*val client = OkHttpClient()
+        val client = OkHttpClient()
         val type = "application/json".toMediaTypeOrNull()
-        val body = json.toString().toRequestBody(type)
+        //val body = json.toString().toRequestBody(type)
 
         val request = Request.Builder()
-            .url(Constants.SERVER_URL)
-            .post(body)
+            .url(Constants.SIGN_IN_URL+"?email=${email}&password=${password}")
+            .get()
             .build()
         val response = client.newCall(request).execute()
 
         val resultCode = response.code
 
-        val apiKey = response.body.toString()
-
-        Log.d("Glipko", "Api key is $apiKey")
-
         if(resultCode == Constants.OK_CODE){
+            val json = JSONObject(response.body?.string())
+            if(json.getString(Constants.RESULT) == "Fail"){
+                return false
+            }
+            val apiKey = json.getJSONObject("message").getString(Constants.API_KEY)
+            Log.d("Glipko", "Api key is $apiKey")
+            val preferences = context?.getSharedPreferences(Constants.MAIN_PREFERENCES, Context.MODE_PRIVATE)
+            preferences?.edit()?.putString(Constants.API_KEY, apiKey)?.apply()
             return true
         }
-        if(resultCode == Constants.NOT_ALLOWED_CODE){
-            return false
-        }
-        throw Exception("There is no such code")*/
-
-        return true
+        throw Exception("There is no such code")
     }
 
     override fun onProgressUpdate(vararg values: String?) {

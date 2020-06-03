@@ -4,4 +4,6 @@ import java.util.*
 
 data class Habit(var name : String,
                  var description : String,
-                 var time : Date)
+                 var isPublic : Boolean,
+                 var daysOfWeek : ArrayList<Boolean>,
+                 var timeOfNotification : ArrayList<Long>)

@@ -1,11 +1,13 @@
 package com.example.smarttracker.SignScreen
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import com.example.smarttracker.Objects.Constants
 import com.example.smarttracker.R
 import com.google.android.material.textfield.TextInputEditText
 
@@ -53,7 +55,9 @@ class SignInFragment : Fragment(){
     }
 
     private fun getApiKey() : String?{
-        return null
+        val preferences = context?.getSharedPreferences(Constants.MAIN_PREFERENCES, Context.MODE_PRIVATE)
+        val apiKey = preferences?.getString(Constants.API_KEY, null)
+        return apiKey
     }
 
     fun setEmailAndPassword(email : String, password: String){
