@@ -6,7 +6,7 @@ from data.__all_models import User
 
 def check_api_key(api_key):
     session = db_session.create_session()
-    user = session.query(User).get(api_key)
+    user = session.query(User).filter(User.api_key == api_key).first()
     if user is None:
         abort(403, message="Invalid api key")
     return user
