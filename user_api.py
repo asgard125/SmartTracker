@@ -42,4 +42,4 @@ class UserListResource(Resource):
         session = db_session.create_session()
         users = session.query(User).all()
         return jsonify({'users': [user.to_dict(
-            only=('id', 'name', 'email', 'api_key', 'rating')) for user in users]})
+            only=('id', 'name', 'rating')) for user in users]})

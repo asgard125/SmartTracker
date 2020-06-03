@@ -50,8 +50,8 @@ def login():
     session = db_session.create_session()
     user = session.query(User).filter(User.email == args['email']).first()
     if user and user.check_password(args['password']):
-        return jsonify({'result': 'OK', 'api_key': user.generate_api_key()})
-    return jsonify({'result': 'Fail'})
+        return jsonify({'result': 'OK', 'message': {'api_key': user.generate_api_key()}})
+    return jsonify({'result': 'Fail', 'message': 'invalid login or password'})
 
 
 api.add_resource(user_api.UserListResource, '/api/v1/users')
@@ -59,4 +59,4 @@ api.add_resource(user_api.UserResource, '/api/v1/user/<int:id>')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
-#  app.run(host='127.0.0.1', port=int(os.environ.get("PORT", 8080)), debug=True)
+    #app.run(host='127.0.0.1', port=int(os.environ.get("PORT", 8080)), debug=True)

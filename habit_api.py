@@ -7,8 +7,8 @@ import datetime
 
 def check_api_key(api_key):
     session = db_session.create_session()
-    user = session.query(User).get(api_key)
-    if user is None or api_key is None:
+    user = session.query(User).filter(User.api_key == api_key).first()
+    if user is None:
         abort(403, message="Invalid api key")
     return user
 
@@ -26,7 +26,7 @@ class HabitResource(Resource):
         parser.add_argument("info_type", required=False)
         parser.add_argument("api_key", required=False)
         args = parser.parse_args()
-        abort_if_user_not_found(id)
+        abort_if_habit_not_found()
         session = db_session.create_session()
         user = session.query(User).get(id)
         return jsonify({'user': user.to_dict(
