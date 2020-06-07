@@ -1,0 +1,188 @@
+get methods:
+
+/api/v1/users
+params:
+info_type, required=True, choices=('private', 'public')
+api_key, required=True
+
+responses:
+if info_type is public:
+id, name, rating
+if info_type is private:
+id, name, rating, login
+
+errors:
+403 if api key is invalid(wrong api_key, wrong api_key for user if info_type is private)
+
+/api/v1/user/<int:id>
+params:
+info_type, required=True, choices=('private', 'public')
+api_key, required=True
+
+responses:
+if info_type is public:
+id, name, rating
+if info_type is private:
+id, name, rating, login
+
+errors:
+403 if api key is invalid(wrong api_key, wrong api_key for user if info_type is private)
+
+
+/api/v1/habit/<int:id>
+params:
+api_key, required=True
+
+responses:
+id, start_date, description, pluses, minuses, type, booting, weekdays,
+notify_time, votes, reputation
+
+errors:
+403 if api_key is invalid
+404 if habit not found
+
+
+/api/v1/habits
+params:
+habit_type, required=True, choices=('public', 'private', 'all')
+info_type, required=True, choices=('short', 'detail')
+api_key", required=True
+user_id, required=True, type=int)
+
+responses:
+if info_type is short:
+list of habits for user with
+'id', 'name' 'type', 'booting', 'weekdays',
+'notify_time', 'reputation'
+if info_type is detail:
+list of habits for user with
+'id', 'name', 'start_date', 'description', 'pluses', 'minuses', 'type', 'booting', 'weekdays',
+'notify_time', 'votes', 'reputation'
+
+errors:
+403 if invalid api key
+403 if habit_type is private/all and api key is not valid for user by user_id
+
+
+===========================================
+post methods:
+
+/api/v1/habits
+params:
+api_key, required=True
+name, required=True
+description, required=False
+pluses, required=False
+minuses, required=False
+type, required=True, choices=('public', 'private')
+weekdays, required=True
+notify_time, required=True
+
+responses:
+'result': 'OK', 'message': {'habit_id': f"{habit.id}"}
+
+errors:
+403 Invalid api_key
+
+===========================================
+put methods:
+
+/api/v1/habit/<int:id>
+api_key, required=True
+name, required=False
+description, required=False
+pluses, required=False
+minuses, required=False
+type, required=False
+weekdays, required=False
+notify_time, required=False
+
+responses:
+'result': 'OK'
+
+errors:
+403 Invalid api_key
+403 Invalid api_key if habit user id != user id by api_key
+404 if habit not found
+
+
+===========================================
+delete methods:
+
+/api/v1/habit/<int:id>
+params:
+api_key, required=True
+
+responses:
+'result': 'OK'
+
+errors:
+403 invalid api_key
+404 habit not found
+403 Invalid api_key if habit user id != user id by api_key
+
+
+===========================================
+not api methods:
+
+/
+params:
+None
+
+responses:
+Hello world
+
+errors:
+None
+
+
+/register
+params:
+login, required=True
+password, required=True
+name, required=True
+responses:
+'result': 'FAIL', 'message': 'user with this login already exists'
+'result': 'OK'
+
+errors:
+None
+
+
+/login
+params:
+email, required=True
+password, required=True
+
+responses:
+'result': 'FAIL', 'message': 'invalid login or password'
+'result': 'OK', 'message': {'api_key': api_key}
+
+errors:
+None
+
+
+/vote_for_habit
+params:
+vote_type, required=True, choices=("positive", "negative") (if positive +1 to habit rep, if negative -1 to habit rep)
+api_key, required=True
+
+responses:
+'result': 'FAIL', 'message': 'cant vote on self habit'
+'result': 'FAIL', 'message': 'already voted on this habit'
+'result': "OK"
+
+errors:
+403 invalid api_key
+
+
+/habit_completed/<int:habit_id>
+params:
+api_key, required=True
+в разработке
+
+responses:
+в разработке
+
+errors:
+в разработке

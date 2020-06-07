@@ -18,9 +18,9 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     __tablename__ = 'users'
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
-    email = sqlalchemy.Column(sqlalchemy.String,
-                              index=True, unique=True, nullable=True)
-    password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    login = sqlalchemy.Column(sqlalchemy.String,
+                              index=True, unique=True, nullable=False)
+    password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     rating = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     api_key = sqlalchemy.Column(sqlalchemy.String, nullable=True, unique=True)
@@ -44,3 +44,9 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
         self.api_key = None
         user.api_key = self.api_key
         session.commit()
+
+    @staticmethod
+    def get_by_api(api_key):
+        session = db_session.create_session()
+        return session.query(User).get(api_key)
+
