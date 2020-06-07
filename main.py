@@ -29,12 +29,12 @@ def register():
     parser.add_argument("name", required=True)
     args = parser.parse_args()
     session = db_session.create_session()
-    check_user = session.query(User).filter(User.email == args['login'].lower().strip()).first()
+    check_user = session.query(User).filter(User.login == args['login'].strip()).first()
     if check_user:
         return jsonify({'result': 'FAIL', 'message': 'user with this login already exists'})
     user = User(
         name=args['name'],
-        email=args['login'].lower().strip(),
+        email=args['login'].strip(),
         password=generate_password_hash(args['password'])
     )
     session.add(user)
@@ -45,11 +45,11 @@ def register():
 @app.route('/login', methods=['GET'])
 def login():
     parser = reqparse.RequestParser()
-    parser.add_argument("email", required=True)
+    parser.add_argument("login", required=True)
     parser.add_argument("password", required=True)
     args = parser.parse_args()
     session = db_session.create_session()
-    user = session.query(User).filter(User.email == args['email']).first()
+    user = session.query(User).filter(User.login == args['login'].strip()).first()
     if user and user.check_password(args['password']):
         return jsonify({'result': 'OK', 'message': {'api_key': user.generate_api_key()}})
     return jsonify({'result': 'FAIL', 'message': 'invalid login or password'})

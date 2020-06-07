@@ -151,7 +151,7 @@ None
 
 /login
 params:
-email, required=True
+login, required=True
 password, required=True
 
 responses:
