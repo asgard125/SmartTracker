@@ -102,7 +102,7 @@ def habit_completed(habit_id):
     parser.add_argument("api_key", required=True)
     session = db_session.create_session()
     args = parser.parse_args()
-    weekday_today = str(datetime.datetime.today().weekday())
+    # weekday_today = str(datetime.datetime.today().weekday())
     habit = session.query(Habit).filter(Habit.id == habit_id).first()
     user = User.get_by_api(args['api_key'])
     if habit is None:
@@ -111,8 +111,8 @@ def habit_completed(habit_id):
         abort(403, 'Invalid api key')
     if habit.user.api_key != args['api_key']:
         abort(403, 'Invalid api key')
-    if weekday_today not in habit.weekdays:
-        return jsonify({'result': 'FAIL', 'message': 'This habit is not scheduled for today'})
+    # if weekday_today not in habit.weekdays:
+    #     return jsonify({'result': 'FAIL', 'message': 'This habit is not scheduled for today'})
     user.rating += habit_rating(len(habit.weekdays.split(', ')), habit.votes, habit.reputation)
     session.commit()
     return jsonify({'result': 'OK'})
