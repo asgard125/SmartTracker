@@ -1,6 +1,6 @@
 get methods:
 
-/check_secret_key/<str:key>
+/check_secret_key/<string:key>
 params:
 None
 
