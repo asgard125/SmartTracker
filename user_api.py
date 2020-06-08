@@ -44,9 +44,21 @@ class UserListResource(Resource):
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument("api_key", required=True)
+        parser.add_argument("limit", required=True, type=int)
+        parser.add_argument("offset", required=True, type=int)
         args = parser.parse_args()
-        check_api_key(args['api_key'])
+        user_by_api = check_api_key(args['api_key'])
         session = db_session.create_session()
-        users = session.query(User).all()
+        users = session.query(User).order_by(User.rating).all()
+        total_users_len = len(users)
+        next_offset = min(total_users_len, args['offset'] + args['limit'])
+        place = 0
+        for i in users:
+            if i.id == user_by_api.id:
+                break
+            place += 1
+        users_to_return = users[args['offset']: next_offset]
+        if next_offset == total_users_len:
+            next_offset = 0
         return jsonify({'users': [user.to_dict(
-            only=('id', 'name', 'rating')) for user in users]})
+            only=('id', 'name', 'rating')) for user in users_to_return], 'nextOffset': f'{next_offset}', 'total': f'{total_users_len}', 'current_user_place': f'{place + 1}'})

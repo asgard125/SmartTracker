@@ -10,10 +10,11 @@ import habit_api
 from flask import jsonify
 from werkzeug.security import check_password_hash, generate_password_hash
 from rating_formulas import habit_rating
+from settings import SECRET_KEY
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'megumin'
+app.config['SECRET_KEY'] = SECRET_KEY
 api = Api(app)
 db_session.global_init("db/stdb.db")
 
