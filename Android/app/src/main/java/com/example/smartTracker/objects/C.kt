@@ -44,4 +44,29 @@ object C {
     const val INFO_TYPE_PUBLIC= "public"
     //SignService
 
+    //HabitsService
+        const val ACTION_HABITS_SERVICE = "com.example.smartTracker.mainScreen.habits.HabitsService"
+        const val GET_ALL_HABITS = 1
+        const val ADD_DEFAULT_HABIT = 2
+    //HabitsService
+
+    //Habits database
+    const val habit = "habit"
+    const val habits = "habits"
+    const val id = "_id"
+    const val name = "name"
+    const val description = "description"
+    const val pluses = "pluses"
+    const val minuses = "minuses"
+    const val type = "type"
+    const val booting = "booting"
+    const val weekdays = "weekdays"
+    const val notifyTime = "notify_time"
+    const val votes = "votes"
+    const val reputation = "reputation"
+    const val muted = "muted"
+    const val isDone = "isDone"
+    const val serverId = "server_id"
+    //Habits database
+
 }

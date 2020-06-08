@@ -22,8 +22,9 @@
 
         <activity android:name="com.example.smartTracker.mainScreen.habits.HabitActivity"
             android:parentActivityName="com.example.smartTracker.mainScreen.MainActivity"/>
-        <service android:name="com.example.smartTracker.mainScreen.habits.HabitsService"/>
         <service android:name=".signScreen.SignService"/>
+        <service android:name="com.example.smartTracker.mainScreen.habits.HabitsService"/>
+        <service android:name=".mainScreen.habits.HabitsNotificationService"/>
     </application>
 
 </manifest>

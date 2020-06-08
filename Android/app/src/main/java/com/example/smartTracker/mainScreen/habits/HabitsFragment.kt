@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.smartTracker.data.Habit
 import com.example.smartTracker.R
+import com.example.smartTracker.objects.C
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class HabitsFragment : Fragment(){
@@ -28,11 +29,13 @@ class HabitsFragment : Fragment(){
 
     private lateinit var adapter : HabitsAdapter
 
+    private lateinit var model : HabitsModel
+
     private lateinit var filter : IntentFilter
     private var receiver = object : BroadcastReceiver(){
 
         override fun onReceive(context: Context?, intent: Intent?) {
-            var habits = intent?.extras?.getParcelableArrayList<Habit>(HabitsService.HABITS)
+            var habits = intent?.extras?.getParcelableArrayList<Habit>(C.habits)
             if(habits == null){
                 habits = ArrayList()
             }
@@ -43,6 +46,7 @@ class HabitsFragment : Fragment(){
                 adapter.habits = habits
                 adapter.notifyDataSetChanged()
             }
+            fab.isEnabled = true
         }
 
     }
@@ -50,12 +54,14 @@ class HabitsFragment : Fragment(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        filter = IntentFilter(HabitsService.ACTION_HABITS_SERVICE)
+        filter = IntentFilter(C.ACTION_HABITS_SERVICE)
         filter.addCategory(Intent.CATEGORY_DEFAULT)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         root = inflater.inflate(R.layout.single_fab_recycler, container, false)
+
+        model = HabitsModel(context)
 
         recycler = root.findViewById(R.id.SingleFabRecycler)
         fab = root.findViewById(R.id.SingleFabRecyclerButton)
@@ -64,19 +70,22 @@ class HabitsFragment : Fragment(){
         recycler.layoutManager = LinearLayoutManager(context)
         recycler.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
+        fab.isEnabled = false
         fab.setOnClickListener{
-            adapter.habits.add(Habit())
+            val newHabit = model.addDefaultHabitAndReturn()
+            adapter.habits.add(newHabit)
             adapter.notifyItemInserted(adapter.habits.size)
         }
 
         val requestHabitsIntent = Intent(context, HabitsService::class.java)
 
         refreshLayout.setOnRefreshListener {
-            activity?.startService(requestHabitsIntent.putExtra(HabitsService.CODE, HabitsService.GET_ALL_HABITS))
+            activity?.startService(requestHabitsIntent.putExtra(C.TASK_TYPE, C.GET_ALL_HABITS))
+            fab.isEnabled = false
             refreshLayout.isRefreshing = false
         }
 
-        activity?.startService(requestHabitsIntent.putExtra(HabitsService.CODE, HabitsService.GET_ALL_HABITS))
+        activity?.startService(requestHabitsIntent.putExtra(C.TASK_TYPE, C.GET_ALL_HABITS))
 
         return root
     }
@@ -107,6 +116,7 @@ class HabitsFragment : Fragment(){
             holder.isDoneCheckbox.setOnCheckedChangeListener { checkbox, isChecked ->
                 if(isChecked){
                     checkbox.isEnabled = false
+                    model.completeHabit(habit.id)
                 }
                 habit.isDone = isChecked
             }
@@ -120,6 +130,7 @@ class HabitsFragment : Fragment(){
                 AlertDialog.Builder(context)
                     .setTitle(getString(R.string.delete_habit_question))
                     .setPositiveButton(getString(R.string.delete)) { dialog, which ->
+                        val serverId = model.deleteHabitAndGetServerId(habit.id)
                         habits.removeAt(holder.adapterPosition)
                         notifyItemRemoved(holder.adapterPosition)
                     }

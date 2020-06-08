@@ -19,7 +19,6 @@ import com.example.smartTracker.data.Habit
 import com.google.android.material.textfield.TextInputEditText
 
 import com.example.smartTracker.R
-import java.util.*
 import kotlin.collections.ArrayList
 
 class HabitActivity : AppCompatActivity() {
@@ -34,7 +33,7 @@ class HabitActivity : AppCompatActivity() {
     private lateinit var descriptionText: TextInputEditText
     private lateinit var plusesRecycler: RecyclerView
     private lateinit var minusesRecycler: RecyclerView
-    private lateinit var timePicker : TimePicker
+    private lateinit var timePicker: TimePicker
     private var toggleButtons = ArrayList<ToggleButton>()
     private lateinit var typeGroup: RadioGroup
 
@@ -44,7 +43,10 @@ class HabitActivity : AppCompatActivity() {
     private lateinit var habit: Habit
     private var updatedPosition: Int = 0
 
+    private lateinit var model : HabitsModel
+
     private var isMuted = false
+    private lateinit var notificationManager: HabitsNotificationManager
 
     override fun onBackPressed() {
         val newHabit = getNewHabit()
@@ -53,9 +55,11 @@ class HabitActivity : AppCompatActivity() {
                 when (which) {
                     Dialog.BUTTON_POSITIVE -> {
                         saveResult(newHabit)
+                        notificationManager.updateHabitAlarms(habit, newHabit)
                         finish()
                     }
                     Dialog.BUTTON_NEGATIVE -> {
+                        notificationManager.updateHabitAlarms(habit, newHabit)
                         finish()
                     }
                 }
@@ -75,6 +79,10 @@ class HabitActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_habit)
+
+        model = HabitsModel(baseContext)
+
+        notificationManager = HabitsNotificationManager(baseContext)
 
         updatedPosition = intent.extras!!.getInt("Position")
         habit = intent.extras!!.getParcelable<Habit>("Habit")!!
@@ -130,11 +138,12 @@ class HabitActivity : AppCompatActivity() {
         minusesRecycler.adapter = minusesAdapter
 
         timePicker.setIs24HourView(true)
-        timePicker.hour = (habit.notificationTime[0].toString()+habit.notificationTime[1]).toInt()
-        timePicker.minute = (habit.notificationTime[3].toString()+habit.notificationTime[4]).toInt()
+        timePicker.hour = (habit.notifyTime[0].toString() + habit.notifyTime[1]).toInt()
+        timePicker.minute =
+            (habit.notifyTime[3].toString() + habit.notifyTime[4]).toInt()
 
         for (day in 0..6) {
-            toggleButtons[day].isChecked = habit.weekDays.contains(day)
+            toggleButtons[day].isChecked = habit.weekdays.contains(day)
         }
 
         if (habit.isPublic) {
@@ -166,13 +175,19 @@ class HabitActivity : AppCompatActivity() {
                 if (habit != newHabit) {
                     saveResult(newHabit)
                 }
+                notificationManager.updateHabitAlarms(habit, newHabit)
                 finish()
             }
             R.id.HabitMuteItem -> {
                 isMuted = !isMuted
                 val title = getString(if (isMuted) R.string.unmute_habit else R.string.mute_habit)
-                val drawable =
-                    getDrawable(if (isMuted) R.drawable.ic_notifications_off else R.drawable.ic_notifications)
+                val drawable = if (isMuted) {
+                    notificationManager.unmuteHabit(habit)
+                    getDrawable(R.drawable.ic_notifications_off)
+                } else {
+                    notificationManager.muteHabit(habit)
+                    getDrawable(R.drawable.ic_notifications)
+                }
                 item.icon = drawable
                 item.title = title
             }
@@ -182,6 +197,7 @@ class HabitActivity : AppCompatActivity() {
     }
 
     private fun saveResult(newHabit: Habit) {
+        model.updateHabit(newHabit)
         val intent = Intent()
         intent.putExtras(bundleOf("Habit" to newHabit, "Position" to updatedPosition))
         setResult(Activity.RESULT_OK, intent)
@@ -193,7 +209,19 @@ class HabitActivity : AppCompatActivity() {
         val isPublic = typeGroup.checkedRadioButtonId == R.id.HabitPublicButton
         val pluses = plusesAdapter.data
         val minuses = minusesAdapter.data
-        val notificationTime = "${timePicker.hour}:${timePicker.minute}"
+
+        var notificationTime = if(timePicker.hour < 10){
+            "0${timePicker.hour}:"
+        }else{
+            "${timePicker.hour}:"
+        }
+
+        notificationTime += if(timePicker.minute < 10){
+            "0${timePicker.minute}"
+        }else{
+            "${timePicker.minute}"
+        }
+
         val weekDays = ArrayList<Int>()
         for (day in 0..6) {
             if (toggleButtons[day].isChecked) {
@@ -206,8 +234,8 @@ class HabitActivity : AppCompatActivity() {
             description = description,
             pluses = pluses,
             minuses = minuses,
-            notificationTime = notificationTime,
-            weekDays = weekDays,
+            notifyTime = notificationTime,
+            weekdays = weekDays,
             isDone = habit.isDone,
             isPublic = isPublic,
             isMuted = isMuted
