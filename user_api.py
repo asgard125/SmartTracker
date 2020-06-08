@@ -27,7 +27,7 @@ class UserResource(Resource):
         user_by_api = check_api_key(args['api_key'])
         if id == 0:
             return jsonify({'user': user_by_api.to_dict(
-                only=('id', 'login', 'name', 'rating'))})
+                only=('id', 'login', 'name', 'rating', 'habit_limit'))})
         abort_if_user_not_found(id)
         session = db_session.create_session()
         user_by_id = session.query(User).get(id)
@@ -35,7 +35,7 @@ class UserResource(Resource):
             if user_by_id.api_key != args['api_key']:
                 abort(403, message='Invalid api key')
             return jsonify({'user': user_by_id.to_dict(
-                only=('id', 'login', 'name', 'rating'))})
+                only=('id', 'login', 'name', 'rating', 'habit_limit'))})
         return jsonify({'user': user_by_id.to_dict(
             only=('id', 'name', 'rating'))})
 

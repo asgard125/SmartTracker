@@ -18,15 +18,16 @@ class Habit(SqlAlchemyBase, UserMixin, SerializerMixin):
     pluses = sqlalchemy.Column(sqlalchemy.Text, nullable=True)
     minuses = sqlalchemy.Column(sqlalchemy.Text, nullable=True)
     type = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    booting = sqlalchemy.Column(sqlalchemy.Boolean, default=True)  # "загрузочная" привычка или нет
+    booting = sqlalchemy.Column(sqlalchemy.Boolean, default=True)
     weekdays = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     notify_time = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     votes = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     reputation = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     voted_users = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    muted = sqlalchemy.Column(sqlalchemy.String, default=False)
     user = orm.relation('User')
 
-    def change_data(self, name, description, pluses, minuses, type, weekdays, notify_time):
+    def change_data(self, name, description, pluses, minuses, type, weekdays, notify_time, muted):
         session = db_session.create_session()
         habit = session.query(Habit).get(self.id)
         if name:
@@ -43,4 +44,6 @@ class Habit(SqlAlchemyBase, UserMixin, SerializerMixin):
             habit.weekdays = weekdays
         if notify_time:
             habit.notify_time = notify_time
+        if muted is not None:
+            habit.muted = muted
         session.commit()

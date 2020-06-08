@@ -24,6 +24,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     rating = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     api_key = sqlalchemy.Column(sqlalchemy.String, nullable=True, unique=True)
+    habit_limit = sqlalchemy.Column(sqlalchemy.Integer, default=10)
 
     habits = orm.relation('Habit', back_populates='user', lazy='subquery')
 

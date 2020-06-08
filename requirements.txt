@@ -6,3 +6,4 @@ sqlalchemy
 requests
 SQLAlchemy-serializer
 werkzeug
+psycopg2

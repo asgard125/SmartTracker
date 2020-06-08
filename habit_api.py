@@ -30,7 +30,7 @@ class HabitResource(Resource):
             abort(403, message='Invalid api key')
         return jsonify({'habit': habit.to_dict(
             only=('id', 'start_date', 'description', 'pluses', 'minuses', 'type', 'booting', 'weekdays',
-                  'notify_time', 'votes', 'reputation'))})
+                  'notify_time', 'votes', 'reputation', 'muted'))})
 
     def put(self, id):
         parser = reqparse.RequestParser()
@@ -39,16 +39,17 @@ class HabitResource(Resource):
         parser.add_argument("description", required=False)
         parser.add_argument("pluses", required=False)
         parser.add_argument("minuses", required=False)
-        parser.add_argument("type", required=False)
+        parser.add_argument("type", required=False, choices=('public', 'private'))
         parser.add_argument("weekdays", required=False)
         parser.add_argument("notify_time", required=False)
+        parser.add_argument("muted", required=False, type=bool)
         args = parser.parse_args()
         user = check_api_key(args['api_key'])
         habit = check_is_habit_exist(id)
         if habit.user_id == user.id:
             habit.change_data(name=args['name'], description=args['description'], pluses=args['pluses'],
                               minuses=args['minuses'],
-                              type=args['type'], weekdays=args['weekdays'], notify_time=args['notify_time'])
+                              type=args['type'], weekdays=args['weekdays'], notify_time=args['notify_time'], muted=args['muted'])
         else:
             abort(403, message='Invalid user')
         return jsonify({'result': 'OK'})
@@ -94,11 +95,11 @@ class HabitListResource(Resource):
         if args['info_type'] == 'detail':
             return jsonify({'habits': [habit.to_dict(
                 only=('id', 'name', 'start_date', 'description', 'pluses', 'minuses', 'type', 'booting', 'weekdays',
-                      'notify_time', 'votes', 'reputation')) for habit in habits]})
+                      'notify_time', 'votes', 'reputation', 'muted')) for habit in habits]})
         else:
             return jsonify({'habits': [habit.to_dict(
                 only=('id', 'name' 'type', 'booting', 'weekdays',
-                      'notify_time', 'reputation')) for habit in habits]})
+                      'notify_time', 'reputation', 'muted')) for habit in habits]})
 
     def post(self):
         parser = reqparse.RequestParser()
@@ -110,6 +111,7 @@ class HabitListResource(Resource):
         parser.add_argument("type", required=True, choices=('public', 'private'))
         parser.add_argument("weekdays", required=True)
         parser.add_argument("notify_time", required=True)
+        parser.add_argument("muted", required=True, type=bool)
         args = parser.parse_args()
         if args['type'] == 'public':
             booting = True
@@ -117,8 +119,10 @@ class HabitListResource(Resource):
             booting = False
         start_date = datetime.datetime.today()
         session = db_session.create_session()
-        #habit_id_return = session.query(Habit).all()[-1].id + 1
+        habit_id_return = session.query(Habit).all()[-1].id + 1
         user = check_api_key(args['api_key'])
+        if user.habit_limit == 0:
+            return jsonify({'result': 'FAIL', 'message': 'you have already reached the limit for adding habits'})
         habit = Habit()
         habit.name = args['name']
         habit.description = args['description']
@@ -129,7 +133,9 @@ class HabitListResource(Resource):
         habit.weekdays = args['weekdays']
         habit.notify_time = args['notify_time']
         habit.start_date = start_date
+        habit.muted = args['muted']
+        user.habit_limit -= 1
         user.habits.append(habit)
         session.merge(user)
         session.commit()
-        return jsonify({'result': 'OK', 'message': {'habit_id': f"{habit.id}"}})
+        return jsonify({'result': 'OK', 'message': {'habit_id': f"{habit_id_return}"}})
