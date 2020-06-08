@@ -61,4 +61,4 @@ class UserListResource(Resource):
         if next_offset == total_users_len:
             next_offset = 0
         return jsonify({'users': [user.to_dict(
-            only=('id', 'name', 'rating')) for user in users_to_return], 'nextOffset': f'{next_offset}', 'total': f'{total_users_len}', 'current_user_place': f'{place + 1}'})
+            only=('id', 'name', 'rating')) for user in users_to_return], 'nextOffset': f'{next_offset}', 'total': f'{total_users_len}', 'current_user_place': f'{place + 1}', 'current_user_rating': f'{user_by_api.rating}'})
