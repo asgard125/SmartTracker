@@ -113,8 +113,7 @@ def habit_completed(habit_id):
         abort(403, 'Invalid api key')
     # if weekday_today not in habit.weekdays:
     #     return jsonify({'result': 'FAIL', 'message': 'This habit is not scheduled for today'})
-    user.rating += habit_rating(len(habit.weekdays.split(', ')), habit.votes, habit.reputation)
-    session.commit()
+    user.change_data(rating=user.rating + habit_rating(len(habit.weekdays.split(', ')), habit.votes, habit.reputation))
     return jsonify({'result': 'OK'})
 
 
