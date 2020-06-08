@@ -46,6 +46,21 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
         user.api_key = self.api_key
         session.commit()
 
+    def change_data(self, habit_limit=None, rating=None, name=None, password=None, login=None):
+        session = db_session.create_session()
+        user = session.query(User).get(self.id)
+        if name is not None:
+            user.name = name
+        if habit_limit is not None:
+            user.habit_limit = habit_limit
+        if rating is not None:
+            user.rating = rating
+        if password is not None:
+            user.password = password
+        if login is not None:
+            user.login = login
+        session.commit()
+
     @staticmethod
     def get_by_api(api_key):
         session = db_session.create_session()

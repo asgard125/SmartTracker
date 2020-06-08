@@ -49,7 +49,8 @@ class HabitResource(Resource):
         if habit.user_id == user.id:
             habit.change_data(name=args['name'], description=args['description'], pluses=args['pluses'],
                               minuses=args['minuses'],
-                              type=args['type'], weekdays=args['weekdays'], notify_time=args['notify_time'], muted=args['muted'])
+                              type=args['type'], weekdays=args['weekdays'], notify_time=args['notify_time'],
+                              muted=args['muted'])
         else:
             abort(403, message='Invalid user')
         return jsonify({'result': 'OK'})
@@ -65,7 +66,7 @@ class HabitResource(Resource):
             abort(410, message="Habit was already deleted")
         if habit.user_id != user.id:
             abort(403, message='Invalid user')
-        user.habit_limit += 1
+        user.change_data(habit_limit=user.habit_limit + 1)
         session.delete(habit)
         session.commit()
         return jsonify({'result': 'OK'})
@@ -120,10 +121,6 @@ class HabitListResource(Resource):
             booting = False
         start_date = datetime.datetime.today()
         session = db_session.create_session()
-        try:
-            habit_id_return = session.query(Habit).all()[-1].id + 1
-        except IndexError:
-            habit_id_return = 1
         user = check_api_key(args['api_key'])
         if user.habit_limit == 0:
             return jsonify({'result': 'FAIL', 'message': 'you have already reached the limit for adding habits'})
@@ -142,4 +139,5 @@ class HabitListResource(Resource):
         user.habits.append(habit)
         session.merge(user)
         session.commit()
+        habit_id_return = session.query(Habit).filter(Habit.user_id == user.id).all()[-1].id
         return jsonify({'result': 'OK', 'message': {'habit_id': f"{habit_id_return}"}})
