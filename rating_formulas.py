@@ -6,7 +6,7 @@ CHEKPOINT_SCORE = 250
 
 
 def sigmoid(x):
-  return 1 / (1 + math.exp(-x))
+    return 1 / (1 + math.exp(-x))
 
 
 def habit_rating(intensity, votes, reputation):

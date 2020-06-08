@@ -119,7 +119,10 @@ class HabitListResource(Resource):
             booting = False
         start_date = datetime.datetime.today()
         session = db_session.create_session()
-        habit_id_return = session.query(Habit).all()[-1].id + 1
+        try:
+            habit_id_return = session.query(Habit).all()[-1].id + 1
+        except IndexError:
+            habit_id_return = 1
         user = check_api_key(args['api_key'])
         if user.habit_limit == 0:
             return jsonify({'result': 'FAIL', 'message': 'you have already reached the limit for adding habits'})
