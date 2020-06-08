@@ -24,6 +24,14 @@ def check():
     return "Hello world"
 
 
+@app.route('check_secret_key/<str:key>', methods=['GET'])
+def check_secret_key(key):
+    if key == app.config['SECRET_KEY']:
+        return jsonify({'result': 'OK'})
+    else:
+        return jsonify({'result': 'FAIL', 'message': 'This version of the app is outdated, please visit https://vk.com/greamteamdev for more information'})
+
+
 @app.route('/register', methods=['POST'])
 def register():
     parser = reqparse.RequestParser()

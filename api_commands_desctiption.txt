@@ -1,5 +1,14 @@
 get methods:
 
+check_secret_key/<str:key>
+params:
+None
+
+responses:
+'result': 'OK' if keys are equal
+'result': 'FAIL', 'message': 'This version of the app is outdated, please visit https://vk.com/greamteamdev for more information' if keys are not equal
+
+
 /login
 params:
 login, required=True
@@ -21,7 +30,8 @@ offset, required=True, type=int
 
 responses:
 id, name, rating for sorted users by rating in range [offset: limit + offset],
-nextOffset, total(total amount of users), current_user_place(by api key user)
+nextOffset, total(total amount of users), current_user_place(by api key user),
+current_user_rating(by api key user)
 
 errors:
 403 if api key is invalid(wrong api_key, wrong api_key for user if info_type is private)
