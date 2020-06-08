@@ -6,7 +6,6 @@ from data.__all_models import User
 
 def check_api_key(api_key):
     user = User.get_by_api(api_key)
-    print(user)
     if user is None:
         abort(403, message="Invalid api key")
     return user

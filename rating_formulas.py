@@ -1,19 +1,24 @@
-
+import math
 
 HABIT_SCORE = 140
 GOAL_SCORE = 500
 CHEKPOINT_SCORE = 250
 
+
+def sigmoid(x):
+  return 1 / (1 + math.exp(-x))
+
+
 def habit_rating(intensity, votes, reputation):
-    if reputation == 0 and votes == 0:
-        coef = 1
+    if votes == 0:
+        return HABIT_SCORE / 2
+    elif reputation > 0:
+        x = reputation / votes
     elif reputation < 0:
-        coef = 1 + reputation / votes
-    elif reputation
-
-
-
-    return HABIT_SCORE
+        x = reputation / votes
+    else:
+        x = reputation / votes
+    return int(sigmoid(x) * HABIT_SCORE / intensity)
 
 
 def goal_rating():

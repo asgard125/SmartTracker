@@ -9,6 +9,8 @@ import user_api
 import habit_api
 from flask import jsonify
 from werkzeug.security import check_password_hash, generate_password_hash
+from rating_formulas import habit_rating
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'megumin'
@@ -80,6 +82,7 @@ def vote_for_habit(habit_id):
         habit.reputation += 1
     else:
         habit.reputation -= 1
+    habit.votes += 1
     session.commit()
     return jsonify({'result': "OK"})
 
@@ -88,6 +91,19 @@ def vote_for_habit(habit_id):
 def habit_completed(habit_id):
     parser = reqparse.RequestParser()
     parser.add_argument("api_key", required=True)
+    session = db_session.create_session()
+    args = parser.parse_args()
+    habit = session.query(Habit).filter(Habit.id == habit_id).first()
+    user = User.get_by_api(args['api_key'])
+    if habit is None:
+        abort(404, 'habit not found')
+    if user is None:
+        abort(403, 'Invalid api key')
+    if habit.user.api_key != args['api_key']:
+        abort(403, 'Invalid api key')
+    user.rating += habit_rating(len(habit.weekdays.split(', ')), habit.votes, habit.reputation)
+    session.commit()
+    return jsonify({'result': 'OK'})
 
 
 api.add_resource(user_api.UserListResource, '/api/v1/users')
