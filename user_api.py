@@ -49,7 +49,7 @@ class UserListResource(Resource):
         args = parser.parse_args()
         user_by_api = check_api_key(args['api_key'])
         session = db_session.create_session()
-        users = session.query(User).order_by(User.rating).all()
+        users = session.query(User).order_by(-User.rating).all()
         total_users_len = len(users)
         next_offset = min(total_users_len, args['offset'] + args['limit'])
         place = 0

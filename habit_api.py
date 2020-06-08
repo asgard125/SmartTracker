@@ -65,6 +65,7 @@ class HabitResource(Resource):
             abort(410, message="Habit was already deleted")
         if habit.user_id != user.id:
             abort(403, message='Invalid user')
+        user.habit_limit += 1
         session.delete(habit)
         session.commit()
         return jsonify({'result': 'OK'})
