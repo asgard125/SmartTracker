@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id = "@+id/HabitMuteItem"
+        android:title = "@string/mute_habit"
+        android:icon = "@drawable/ic_notifications"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id = "@+id/HabitSaveItem"
+        android:title = "@string/save"
+        android:icon="@drawable/ic_done"
+        app:showAsAction="always"/>
+
+</menu>

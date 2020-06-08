@@ -24,11 +24,11 @@
             style = "@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id = "@+id/EmailSignIn"
+                android:id = "@+id/LoginSignIn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint = "@string/email"
-                android:inputType="text|textEmailAddress"/>
+                android:hint = "@string/login"
+                android:inputType="text"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
