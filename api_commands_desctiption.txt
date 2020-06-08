@@ -142,6 +142,7 @@ api_key, required=True
 
 responses:
 'result': 'OK'
+'result': 'FAIL', 'message': 'This habit is not scheduled for today'
 
 errors:
 404 if habit not found
@@ -177,6 +178,7 @@ errors:
 403 invalid api_key
 404 habit not found
 403 Invalid api_key if habit user id != user id by api_key
+410 Habit was already deleted
 
 
 ===========================================
