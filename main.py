@@ -96,5 +96,5 @@ api.add_resource(habit_api.HabitResource, '/api/v1/habit/<int:id>')
 api.add_resource(habit_api.HabitListResource, '/api/v1/habits')
 
 if __name__ == '__main__':
-    #app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
-    app.run(host='127.0.0.1', port=int(os.environ.get("PORT", 8080)), debug=True)
+    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
+    #app.run(host='127.0.0.1', port=int(os.environ.get("PORT", 8080)), debug=True)
