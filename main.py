@@ -13,7 +13,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'megumin'
 api = Api(app)
-db_session.global_init("db/stdb.sqlite")
+db_session.global_init("db/stdb.db")
 
 
 @app.route('/', methods=['GET'])
@@ -34,7 +34,7 @@ def register():
         return jsonify({'result': 'FAIL', 'message': 'user with this login already exists'})
     user = User(
         name=args['name'],
-        email=args['login'].strip(),
+        login=args['login'].strip(),
         password=generate_password_hash(args['password'])
     )
     session.add(user)

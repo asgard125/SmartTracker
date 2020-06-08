@@ -24,7 +24,10 @@ class UserResource(Resource):
         parser.add_argument("info_type", required=True, choices=('private', 'public'))  # public/private
         parser.add_argument("api_key", required=True)
         args = parser.parse_args()
-        check_api_key(args['api_key'])
+        user_by_api = check_api_key(args['api_key'])
+        if id == -1:
+            return jsonify({'user': user_by_api.to_dict(
+                only=('id', 'login' 'name', 'rating'))})
         abort_if_user_not_found(id)
         session = db_session.create_session()
         user_by_id = session.query(User).get(id)
