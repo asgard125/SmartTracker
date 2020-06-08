@@ -24,7 +24,7 @@ def check():
     return "Hello world"
 
 
-@app.route('check_secret_key/<str:key>', methods=['GET'])
+@app.route('/check_secret_key/<str:key>', methods=['GET'])
 def check_secret_key(key):
     if key == app.config['SECRET_KEY']:
         return jsonify({'result': 'OK'})
