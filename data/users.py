@@ -48,5 +48,6 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     @staticmethod
     def get_by_api(api_key):
         session = db_session.create_session()
-        return session.query(User).get(api_key)
+        user = session.query(User).filter(User.api_key == api_key).first()
+        return user
 

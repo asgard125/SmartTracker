@@ -6,6 +6,7 @@ from data.__all_models import User
 
 def check_api_key(api_key):
     user = User.get_by_api(api_key)
+    print(user)
     if user is None:
         abort(403, message="Invalid api key")
     return user
@@ -25,9 +26,9 @@ class UserResource(Resource):
         parser.add_argument("api_key", required=True)
         args = parser.parse_args()
         user_by_api = check_api_key(args['api_key'])
-        if id == -1:
+        if id == 0:
             return jsonify({'user': user_by_api.to_dict(
-                only=('id', 'login' 'name', 'rating'))})
+                only=('id', 'login', 'name', 'rating'))})
         abort_if_user_not_found(id)
         session = db_session.create_session()
         user_by_id = session.query(User).get(id)
@@ -35,7 +36,7 @@ class UserResource(Resource):
             if user_by_id.api_key != args['api_key']:
                 abort(403, message='Invalid api key')
             return jsonify({'user': user_by_id.to_dict(
-                only=('id', 'login' 'name', 'rating'))})
+                only=('id', 'login', 'name', 'rating'))})
         return jsonify({'user': user_by_id.to_dict(
             only=('id', 'name', 'rating'))})
 
