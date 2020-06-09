@@ -6,7 +6,7 @@ import android.content.Intent
 import android.util.Log
 import com.example.smartTracker.R
 import com.example.smartTracker.objects.C
-import com.example.smartTracker.signScreen.User
+import com.example.smartTracker.data.User
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
@@ -47,8 +47,10 @@ class RatingService : IntentService("RatingService") {
             val currentUserRating = responseJson.getLong(C.CURRENT_USER_RATING)
             val currentUserId = preferences.getLong(C.USER_ID, 0)
 
-            val currentUser = User(userId = currentUserId, name = application.getString(R.string.you),
-                rating = currentUserRating, ratingPlace = currentUserPlace)
+            val currentUser = User(
+                userId = currentUserId, name = application.getString(R.string.you),
+                rating = currentUserRating, ratingPlace = currentUserPlace
+            )
 
             val jsonUsers = responseJson.getJSONArray(C.USERS)
             var jsonUser : JSONObject
@@ -61,7 +63,14 @@ class RatingService : IntentService("RatingService") {
                 name = jsonUser.getString(C.NAME)
                 rating = jsonUser.getLong(C.RATING)
                 if(id != currentUserId){
-                    users.add(User(userId = id, name = name, rating = rating, ratingPlace = i+1))
+                    users.add(
+                        User(
+                            userId = id,
+                            name = name,
+                            rating = rating,
+                            ratingPlace = i + 1
+                        )
+                    )
                 }else{
                     users.add(currentUser)
                 }

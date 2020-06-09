@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.smartTracker.R
 import com.example.smartTracker.objects.C
-import com.example.smartTracker.signScreen.User
+import com.example.smartTracker.data.User
 
 class RatingFragment : Fragment() {
 

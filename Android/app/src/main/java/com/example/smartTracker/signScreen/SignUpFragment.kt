@@ -15,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.smartTracker.R
+import com.example.smartTracker.data.User
 import com.example.smartTracker.objects.C
 import com.google.android.material.textfield.TextInputEditText
 
@@ -76,7 +77,11 @@ class SignUpFragment : Fragment(){
             val password = passwordText.text.toString()
             val password2 = passwordVerifyText.text.toString()
             if(password == password2){
-                val user = User(name = name, login = login, password = password)
+                val user = User(
+                    name = name,
+                    login = login,
+                    password = password
+                )
                 val intent = Intent(context, SignService::class.java)
 
                 intent.putExtra(C.TASK_TYPE, C.SIGN_UP_TASK)

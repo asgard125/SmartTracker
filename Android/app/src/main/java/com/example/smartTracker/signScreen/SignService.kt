@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.example.smartTracker.R
+import com.example.smartTracker.data.User
 import com.example.smartTracker.objects.C
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
@@ -141,7 +142,7 @@ class SignService : IntentService("SignService"){
         return responseIntent
     }
 
-    private fun downloadBasicUserInfo(user : User) : User{
+    private fun downloadBasicUserInfo(user : User) : User {
         val client = OkHttpClient()
 
         val url = C.GET_BASIC_INFO_URL+"?${C.INFO_TYPE}=${C.INFO_TYPE_PRIVATE}&${C.API_KEY}=${user.apiKey}"
