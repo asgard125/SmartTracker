@@ -11,7 +11,7 @@ def sigmoid(x):
 
 def habit_rating(intensity, votes, reputation):
     if votes == 0:
-        return HABIT_SCORE / 2
+        return int(HABIT_SCORE / 2 / intensity)
     elif reputation > 0:
         x = reputation / votes
     elif reputation < 0:
