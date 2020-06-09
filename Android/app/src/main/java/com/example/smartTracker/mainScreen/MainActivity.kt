@@ -10,6 +10,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.example.smartTracker.mainScreen.habits.HabitsFragment
 import com.example.smartTracker.R
+import com.example.smartTracker.mainScreen.rating.RatingFragment
 import com.google.android.material.navigation.NavigationView
 import java.lang.Exception
 
@@ -64,7 +65,8 @@ class MainActivity : AppCompatActivity() {
                     selectedTitle = getString(R.string.habits)
                 }
                 R.id.RatingFragmentItem ->{
-                    selectedFragment = RatingFragment()
+                    selectedFragment =
+                        RatingFragment()
                     selectedTitle = getString(R.string.rating)
                 }
                 R.id.SettingsFragmentItem ->{

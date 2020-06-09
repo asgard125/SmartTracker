@@ -79,7 +79,7 @@ class SignUpFragment : Fragment(){
                 val user = User(name = name, login = login, password = password)
                 val intent = Intent(context, SignService::class.java)
 
-                intent.putExtra(C.TASK_TYPE, C.SIGN_UP)
+                intent.putExtra(C.TASK_TYPE, C.SIGN_UP_TASK)
                 intent.putExtra(C.USER, user)
 
                 dialog = AlertDialog.Builder(context).setView(R.layout.dialog_loading).setCancelable(false).create()

@@ -20,11 +20,10 @@ class SignService : IntentService("SignService"){
         var user = intent?.getParcelableExtra<User>(C.USER)
         val responseIntent : Intent
         when(intent?.getStringExtra(C.TASK_TYPE)){
-            C.SIGN_IN ->{
+            C.SIGN_IN_TASK ->{
                 val response = signInUser(user)
 
                 val statusCode = response.code
-                Log.d("SmartTracker", "SignService : login http code is $statusCode")
 
                 if(statusCode == C.OK_CODE){
 
@@ -52,12 +51,11 @@ class SignService : IntentService("SignService"){
                     sendBroadcast(responseIntent)
                 }
             }
-            C.SIGN_UP ->{
+            C.SIGN_UP_TASK ->{
 
                 val response = signUpUser(user)
 
                 val statusCode = response.code
-                Log.d("SmartTracker", "SignService : registration http code is $statusCode")
 
                 if(statusCode == C.OK_CODE){
 
@@ -81,6 +79,29 @@ class SignService : IntentService("SignService"){
                     sendBroadcast(responseIntent)
                 }
             }
+            C.CHECK_SECRET_KEY_TASK ->{
+                val url = C.CHECK_SECRET_KEY_URL+C.SECRET_KEY
+
+                val client = OkHttpClient()
+
+                val request = Request.Builder()
+                    .url(url)
+                    .get()
+                    .build()
+
+                val response = client.newCall(request).execute()
+                val statusCode = response.code
+
+                if(statusCode == C.OK_CODE){
+                    val responseJson = JSONObject(response.body?.string())
+                    responseIntent = Intent(C.ACTION_SIGN_SERVICE+"1")
+                    responseIntent.addCategory(Intent.CATEGORY_DEFAULT)
+                    responseIntent.putExtra(C.RESULT, responseJson.getString(C.RESULT))
+                    sendBroadcast(responseIntent)
+                }else{
+                    Log.d("SmartTracker", "SignService : checkSecretKey, ${response.message}")
+                }
+            }
         }
     }
 
@@ -98,8 +119,6 @@ class SignService : IntentService("SignService"){
     private fun signUpUser(user : User?) : Response {
         val map = mapOf(C.NAME to user?.name, C.LOGIN to user?.login, C.PASSWORD to user?.password)
         val json = JSONObject(map)
-
-        Log.d("SmartTracker", "SignService : registration json is $json")
 
         val client = OkHttpClient()
         val type = "application/json".toMediaTypeOrNull()
@@ -127,7 +146,6 @@ class SignService : IntentService("SignService"){
 
         val url = C.GET_BASIC_INFO_URL+"?${C.INFO_TYPE}=${C.INFO_TYPE_PRIVATE}&${C.API_KEY}=${user.apiKey}"
 
-        Log.d("SmartTracker", "SignService : basic user information url is $url")
         val request = Request.Builder()
             .url(url)
             .get()
@@ -135,7 +153,6 @@ class SignService : IntentService("SignService"){
 
         val response = client.newCall(request).execute()
         val statusCode = response.code
-        Log.d("SmartTracker", "SignService : code of request for basic user information is $statusCode")
 
         if(statusCode == C.OK_CODE){
 

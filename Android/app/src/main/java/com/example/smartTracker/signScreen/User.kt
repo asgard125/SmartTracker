@@ -8,5 +8,6 @@ data class User(var userId : Long = 0,
                 var name : String = "",
                 var login : String = "",
                 var password : String = "",
+                var apiKey : String = "",
                 var rating : Long = 0,
-                var apiKey : String = "") : Parcelable
+                var ratingPlace : Int = 0) : Parcelable

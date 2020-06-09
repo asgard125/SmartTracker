@@ -2,6 +2,7 @@ package com.example.smartTracker.mainScreen.habits
 
 import android.content.ContentValues
 import android.content.Context
+import android.util.Log
 import com.example.smartTracker.R
 import com.example.smartTracker.data.Habit
 import com.example.smartTracker.data.MainDatabaseHelper
@@ -85,7 +86,7 @@ class HabitsModel(private val context : Context?){
         content.put(C.description, habit.description)
         content.put(C.pluses, "")
         content.put(C.minuses, "")
-        content.put(C.weekdays, "")
+        content.put(C.weekdays, "0, 2, 4")
         content.put(C.notifyTime, habit.notifyTime)
         content.put(C.votes, 0)
         content.put(C.reputation, 0)
@@ -99,22 +100,31 @@ class HabitsModel(private val context : Context?){
     }
 
     fun deleteHabitAndGetServerId(id : Long) : Long{
-        val cursor = db.query(C.habits, arrayOf(C.serverId), "${C.id} = ?", arrayOf(id.toString()), null, null, null)
-        cursor.moveToFirst()
-        val serverId = cursor.getLong(cursor.getColumnIndex(C.serverId))
-        cursor.close()
+        val serverId = getServerId(id)
         db.delete(C.habits, "${C.id} = ?", arrayOf(id.toString()))
+        Log.d("SmartTracker", "deleting from database $serverId")
         return serverId
     }
 
     fun completeHabit(id : Long){
-
+        val content = ContentValues()
+        content.put(C.isDone, 1)
+        db.update(C.habits, content, "${C.id} = ?", arrayOf(id.toString()))
     }
 
-    fun setServerId(id : Long, serverId : Int){
+    fun setServerId(id : Long, serverId : Long){
         val content = ContentValues()
         content.put(C.serverId, serverId)
         db.update(C.habits, content, "${C.id} = ?", arrayOf(id.toString()))
+        Log.d("SmartTracker", "adding to database $serverId")
+    }
+
+    fun getServerId(id : Long) : Long{
+        val cursor = db.query(C.habits, arrayOf(C.serverId), "${C.id} = ?", arrayOf(id.toString()), null, null, null)
+        cursor.moveToFirst()
+        val serverId = cursor.getLong(cursor.getColumnIndex(C.serverId))
+        cursor.close()
+        return serverId
     }
 
     fun updateHabit(habit : Habit){
@@ -143,9 +153,9 @@ class HabitsModel(private val context : Context?){
         content.put(C.muted, if(habit.isMuted) 1 else 0)
         content.put(C.isDone, if(habit.isDone) 1 else 0)
         db.update(C.habits, content, "${C.id} = ?", arrayOf(habit.id.toString()))
-8    }
+     }
 
-    private fun listToString(array : ArrayList<String>) : String{
+    fun listToString(array : ArrayList<String>) : String{
         val string = StringBuilder()
         for(i in 0 until array.size) {
             string.append(array[i])

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -19,6 +20,8 @@ import com.example.smartTracker.data.Habit
 import com.example.smartTracker.R
 import com.example.smartTracker.objects.C
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.util.*
+import kotlin.collections.ArrayList
 
 class HabitsFragment : Fragment(){
 
@@ -70,22 +73,25 @@ class HabitsFragment : Fragment(){
         recycler.layoutManager = LinearLayoutManager(context)
         recycler.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
 
+        val addNewHabitIntent = Intent(context, HabitsService::class.java)
+
         fab.isEnabled = false
         fab.setOnClickListener{
             val newHabit = model.addDefaultHabitAndReturn()
             adapter.habits.add(newHabit)
             adapter.notifyItemInserted(adapter.habits.size)
+            activity?.startService(addNewHabitIntent.putExtra(C.TASK_TYPE, C.ADD_DEFAULT_HABIT_TASK).putExtra(C.habit, newHabit))
         }
 
         val requestHabitsIntent = Intent(context, HabitsService::class.java)
 
         refreshLayout.setOnRefreshListener {
-            activity?.startService(requestHabitsIntent.putExtra(C.TASK_TYPE, C.GET_ALL_HABITS))
+            activity?.startService(requestHabitsIntent.putExtra(C.TASK_TYPE, C.GET_ALL_HABITS_TASK))
             fab.isEnabled = false
             refreshLayout.isRefreshing = false
         }
 
-        activity?.startService(requestHabitsIntent.putExtra(C.TASK_TYPE, C.GET_ALL_HABITS))
+        activity?.startService(requestHabitsIntent.putExtra(C.TASK_TYPE, C.GET_ALL_HABITS_TASK))
 
         return root
     }
@@ -112,16 +118,33 @@ class HabitsFragment : Fragment(){
 
             holder.title.text = habit.name
 
-            holder.isDoneCheckbox.isEnabled = !habit.isDone
+            val calendar = Calendar.getInstance()
+            var weekday = calendar.get(Calendar.DAY_OF_WEEK)
+            weekday = when(weekday){
+                1 -> 6
+                2 -> 0
+                3 -> 1
+                4 -> 2
+                5 -> 3
+                6 -> 4
+                7 -> 5
+                else -> -1
+            }
+
+            holder.isDoneCheckbox.isEnabled = !habit.isDone && habit.weekdays.contains(weekday)
+
+            holder.isDoneCheckbox.isChecked = habit.isDone
+
             holder.isDoneCheckbox.setOnCheckedChangeListener { checkbox, isChecked ->
                 if(isChecked){
+                    Toast.makeText(context, getString(R.string.habit_completed), Toast.LENGTH_SHORT).show()
                     checkbox.isEnabled = false
-                    model.completeHabit(habit.id)
+                    val completedIntent = Intent(context, HabitsService::class.java)
+                    activity?.startService(completedIntent.putExtra(C.TASK_TYPE, C.COMPLETE_HABIT_TASK).putExtra(C.id, habit.id))
                 }
                 habit.isDone = isChecked
             }
 
-            holder.isDoneCheckbox.isChecked = habit.isDone
 
             val type = if(habit.isPublic) getString(R.string.public_habit) else getString(R.string.private_habit)
             holder.info.text = getString(R.string.habit_info_pattern, habit.reputation, type)
@@ -130,9 +153,10 @@ class HabitsFragment : Fragment(){
                 AlertDialog.Builder(context)
                     .setTitle(getString(R.string.delete_habit_question))
                     .setPositiveButton(getString(R.string.delete)) { dialog, which ->
-                        val serverId = model.deleteHabitAndGetServerId(habit.id)
                         habits.removeAt(holder.adapterPosition)
                         notifyItemRemoved(holder.adapterPosition)
+                        val intent = Intent(context, HabitsService::class.java)
+                        activity?.startService(intent.putExtra(C.TASK_TYPE, C.DELETE_HABIT_TASK).putExtra(C.id, habit.id))
                     }
                     .setNegativeButton(getString(R.string.cancel), null)
                     .show()

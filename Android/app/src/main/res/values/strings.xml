@@ -53,4 +53,7 @@
     <string name="saturday">Sa</string>
     <string name="sunday">Su</string>
     <string name="new_habit">New habit</string>
+    <string name="you">You</string>
+    <string name="habit_completed">Habit completed!</string>
+    <string name="update_text">This version of the app is outdated, please visit https://vk.com/greamteamdev \nfor more information</string>
 </resources>

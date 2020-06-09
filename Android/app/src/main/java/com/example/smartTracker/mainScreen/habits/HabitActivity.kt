@@ -6,6 +6,7 @@ import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
@@ -19,6 +20,7 @@ import com.example.smartTracker.data.Habit
 import com.google.android.material.textfield.TextInputEditText
 
 import com.example.smartTracker.R
+import com.example.smartTracker.objects.C
 import kotlin.collections.ArrayList
 
 class HabitActivity : AppCompatActivity() {
@@ -197,10 +199,10 @@ class HabitActivity : AppCompatActivity() {
     }
 
     private fun saveResult(newHabit: Habit) {
-        model.updateHabit(newHabit)
-        val intent = Intent()
         intent.putExtras(bundleOf("Habit" to newHabit, "Position" to updatedPosition))
         setResult(Activity.RESULT_OK, intent)
+        val intent = Intent(baseContext, HabitsService::class.java)
+        startService(intent.putExtra(C.TASK_TYPE, C.UPDATE_HABIT_TASK).putExtra(C.habit, newHabit))
     }
 
     private fun getNewHabit(): Habit {
@@ -274,22 +276,12 @@ class HabitActivity : AppCompatActivity() {
                 holder.title.setText(data[holder.adapterPosition])
                 holder.title.addTextChangedListener(object : TextWatcher {
 
-                    override fun beforeTextChanged(
-                        s: CharSequence?,
-                        start: Int,
-                        count: Int,
-                        after: Int
-                    ) {
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
                     }
 
 
-                    override fun onTextChanged(
-                        s: CharSequence?,
-                        start: Int,
-                        before: Int,
-                        count: Int
-                    ) {
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
 
                     }
 

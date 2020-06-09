@@ -25,6 +25,7 @@
         <service android:name=".signScreen.SignService"/>
         <service android:name="com.example.smartTracker.mainScreen.habits.HabitsService"/>
         <service android:name=".mainScreen.habits.HabitsNotificationService"/>
+        <service android:name=".mainScreen.rating.RatingService"/>
     </application>
 
 </manifest>
