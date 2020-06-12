@@ -5,8 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.example.smartTracker.R
+import com.example.smartTracker.data.Habit
 import com.example.smartTracker.data.User
+import com.example.smartTracker.mainScreen.habits.HabitsNotificationManager
 import com.example.smartTracker.objects.C
+import com.example.smartTracker.objects.Database
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -31,14 +34,16 @@ class SignService : IntentService("SignService"){
                     val responseJson = JSONObject(response.body?.string())
 
                     if(responseJson.get(C.RESULT) == C.RESULT_OK){
-                        responseIntent = getResponseIntent(C.SIGN_IN_STATUS, C.STATUS_OK, getString(R.string.login_completed))
-                        sendBroadcast(responseIntent)
                         if(user != null){
                             user.apiKey = responseJson.getJSONObject(C.MESSAGE).getString(C.API_KEY)
                             user = downloadBasicUserInfo(user)
                             saveBasicUserInfo(user)
                         }
-
+                        val habits = downloadAllHabits(user?.userId, user?.apiKey)
+                        setUpHabitsNotifications(habits)
+                        saveUserDataToDatabase(habits)
+                        responseIntent = getResponseIntent(C.SIGN_IN_STATUS, C.STATUS_OK, getString(R.string.login_completed))
+                        sendBroadcast(responseIntent)
                     }else{
                         when(responseJson.get(C.MESSAGE)){
                             C.INVALID_LOGIN_PASSWORD_ERROR -> {
@@ -179,5 +184,84 @@ class SignService : IntentService("SignService"){
         editor.putLong(C.RATING, user.rating)
         editor.apply()
     }
+
+    private fun downloadAllHabits(userId : Long?, apiKey : String?) : ArrayList<Habit>{
+
+        val client = OkHttpClient()
+
+        val url = C.GET_ALL_HABITS_URL+"?${C.habitType}=all&${C.INFO_TYPE}=detail&${C.API_KEY}=${apiKey}&${C.USER_ID}=$userId"
+
+        val request = Request.Builder()
+            .url(url)
+            .get()
+            .build()
+
+        val response = client.newCall(request).execute()
+        val statusCode = response.code
+        if(statusCode == C.OK_CODE){
+            val responseJson = JSONObject(response.body?.string())
+            Log.d("SmartTracker", responseJson.toString())
+            val habitsJsonArray = responseJson.getJSONArray(C.habits)
+            var habitJson : JSONObject
+            val habits = ArrayList<Habit>()
+            var habit : Habit
+            var rowPluses : String
+            var rowMinuses : String
+            var rowWeekdays : String
+            var weekdaysArray : ArrayList<Int>
+            var weekdaysString : ArrayList<String>
+            for(i in 0 until habitsJsonArray.length()){
+                habit = Habit()
+                habitJson = habitsJsonArray.get(i) as JSONObject
+                habit.serverId = habitJson.getLong(C.ID)
+                habit.name = habitJson.getString(C.name)
+                habit.description = habitJson.getString(C.description)
+                rowPluses = habitJson.getString(C.pluses)
+                if(rowPluses.isNotEmpty()){
+                    habit.pluses = ArrayList(rowPluses.split(", "))
+                }
+                        rowMinuses = habitJson.getString(C.minuses)
+                if(rowMinuses.isNotEmpty()){
+                    habit.minuses = ArrayList(rowMinuses.split(", "))
+                }
+                rowWeekdays = habitJson.getString(C.weekdays)
+                if(rowWeekdays.isNotEmpty()){
+                    weekdaysString = ArrayList(rowWeekdays.split(", "))
+                    weekdaysArray = ArrayList()
+                    for(weekday in weekdaysString){
+                        weekdaysArray.add(weekday.toInt())
+                    }
+                    habit.weekdays = weekdaysArray
+                }
+                habit.notifyTime = habitJson.getString(C.notifyTime)
+                habit.votes = habitJson.getInt(C.votes)
+                habit.reputation = habitJson.getInt(C.reputation)
+                habit.isBooting = habitJson.getBoolean(C.booting)
+                habit.isPublic = habitJson.getString(C.type) == "public"
+                habit.isMuted = habitJson.getBoolean(C.muted)
+                habits.add(habit)
+            }
+            return habits
+        }else{
+            Log.d("SmartTracker", "ProfileService, status code is $statusCode")
+            return ArrayList<Habit>()
+        }
+    }
+
+    private fun setUpHabitsNotifications(habits: ArrayList<Habit>){
+        val notificationManager = HabitsNotificationManager(applicationContext)
+        for(habit in habits) {
+            if (!habit.isMuted) {
+                notificationManager.setNewAlarms(habit)
+            }
+        }
+    }
+
+    private fun saveUserDataToDatabase(habits : ArrayList<Habit>){
+        for(habit in habits){
+            Database.HabitsModel.addHabit(habit)
+        }
+    }
+
 
 }

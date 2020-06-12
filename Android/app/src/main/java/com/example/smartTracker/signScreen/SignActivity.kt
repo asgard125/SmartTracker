@@ -51,6 +51,10 @@ class SignActivity : AppCompatActivity(), SignFragmentCallback{
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign)
 
+        if(!Database.isDatabaseInitialized()){
+            Database.setUpDatabase(applicationContext)
+        }
+
         filter = IntentFilter(C.ACTION_SIGN_SERVICE+"1")
         filter.addCategory(Intent.CATEGORY_DEFAULT)
 

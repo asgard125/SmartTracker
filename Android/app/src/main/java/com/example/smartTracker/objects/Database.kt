@@ -17,6 +17,10 @@ object Database {
     lateinit var db : SQLiteDatabase
     var isSet = false
 
+    fun isDatabaseInitialized() : Boolean{
+        return this::db.isInitialized
+    }
+
     fun setUpDatabase(context : Context){
         this.context = context
         helper = MainDatabaseHelper(context)
@@ -108,6 +112,28 @@ object Database {
             val id = db.insert(C.habits, null, content)
             habit.id = id
             return habit
+        }
+
+        fun addHabit(habit : Habit)  {
+            val content = ContentValues()
+            content.put(C.serverId, habit.serverId)
+            content.put(C.name, habit.name)
+            content.put(C.description, habit.description)
+            content.put(C.pluses, listToString(habit.pluses))
+            content.put(C.minuses, listToString(habit.minuses))
+            val weekdaysString = ArrayList<String>()
+            for(i in 0 until habit.weekdays.size){
+                weekdaysString.add(habit.weekdays[i].toString())
+            }
+            content.put(C.weekdays, listToString(weekdaysString))
+            content.put(C.notifyTime, habit.notifyTime)
+            content.put(C.votes, habit.votes)
+            content.put(C.reputation, habit.reputation)
+            content.put(C.booting, if(habit.isBooting) 1 else 0)
+            content.put(C.habitType, if(habit.isBooting) "public" else "private")
+            content.put(C.isDone, if(habit.isDone) 1 else 0)
+            content.put(C.muted, if(habit.isMuted  ) 1 else 0)
+            db.insert(C.habits, null, content)
         }
 
         fun updateHabit(habit : Habit){

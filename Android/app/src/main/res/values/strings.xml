@@ -67,4 +67,5 @@
     <string name="no_pluses">No pluses</string>
     <string name="no_minuses">No minuses</string>
     <string name="one_day_notification_error">You need to choose at least one day of notification</string>
+    <string name="exit_account">Exit account</string>
 </resources>

@@ -39,6 +39,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        if(!Database.isDatabaseInitialized()){
+            Database.setUpDatabase(applicationContext)
+        }
+
         val updateIntent = Intent(applicationContext, DateUpdateReceiver::class.java)
         val pendingIntent = PendingIntent.getBroadcast(applicationContext, 0, updateIntent, PendingIntent.FLAG_CANCEL_CURRENT)
         val calendar = Calendar.getInstance()
@@ -47,8 +51,6 @@ class MainActivity : AppCompatActivity() {
         calendar.set(Calendar.SECOND, 0)
         calendar.add(Calendar.DAY_OF_YEAR, 1)
         (getSystemService(Context.ALARM_SERVICE) as AlarmManager).setRepeating(AlarmManager.RTC, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, pendingIntent)
-
-        Database.setUpDatabase(applicationContext)
 
         toolbar = findViewById(R.id.MainToolBar)
         drawer = findViewById(R.id.MainDrawer)

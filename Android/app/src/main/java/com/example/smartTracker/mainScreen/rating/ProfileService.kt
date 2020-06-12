@@ -50,7 +50,7 @@ class ProfileService : IntentService("ProfileService"){
                 if(rowPluses.isNotEmpty()){
                     habit.pluses = ArrayList(rowPluses.split(", "))
                 }
-                rowMinuses = habitJson.getString(C.pluses)
+                rowMinuses = habitJson.getString(C.minuses)
                 if(rowMinuses.isNotEmpty()){
                     habit.minuses = ArrayList(rowMinuses.split(", "))
                 }

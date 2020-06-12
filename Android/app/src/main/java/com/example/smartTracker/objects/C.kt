@@ -87,6 +87,7 @@ object C {
     const val pluses = "pluses"
     const val minuses = "minuses"
     const val habitType = "habit_type"
+    const val type = "type"
     const val booting = "booting"
     const val weekdays = "weekdays"
     const val notifyTime = "notify_time"

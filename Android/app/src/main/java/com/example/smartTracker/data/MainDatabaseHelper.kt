@@ -16,8 +16,8 @@ class MainDatabaseHelper(context : Context?) : SQLiteOpenHelper(context, "main_d
                 "${C.minuses} TEXT," + // 1 minus,2 minus,3 minus
                 "${C.weekdays} TEXT," + // 1, 2, 4
                 "${C.notifyTime} TEXT," + // 12:00
-                "${C.votes} INT," + // 123
-                "${C.reputation} INT," + // 34
+                "${C.votes} INTEGER," + // 123
+                "${C.reputation} INTEGER," + // 34
                 "${C.booting} INTEGER," + // 1
                 "${C.habitType} TEXT," + // public
                 "${C.muted} INTEGER," + // 1

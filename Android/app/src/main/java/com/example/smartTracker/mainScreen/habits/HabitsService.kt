@@ -44,7 +44,7 @@ class HabitsService : IntentService("HabitsService") {
                     C.description to habit.description,
                     C.pluses to pluses,
                     C.minuses to minuses,
-                    C.habitType to habitType,
+                    C.type to habitType,
                     C.weekdays to weekdays,
                     C.notifyTime to habit.notifyTime,
                     C.muted to habit.isMuted
@@ -72,14 +72,11 @@ class HabitsService : IntentService("HabitsService") {
                     if (responseJson.get(C.RESULT) == C.RESULT_OK) {
                         val serverId = responseJson.getJSONObject(C.MESSAGE).getLong(C.habitId)
 
-                        Log.d(
-                            "SmartTracker",
-                            "HabitsService : addDefaultHabit, server id is $serverId"
-                        )
+                        Log.d("SmartTracker", "HabitsService : addDefaultHabit, server id is $serverId")
 
                         Database.HabitsModel.setServerId(habit.id, serverId)
                     } else {
-                        Log.d("SmartTracker", responseJson.getString(C.MESSAGE))
+                        Log.d("SmartTracker", "HabitsService : addDefaultHabit, ${responseJson.getString(C.MESSAGE)}")
                     }
 
 

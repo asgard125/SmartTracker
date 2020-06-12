@@ -110,12 +110,11 @@ class RatingFragment : Fragment() {
             holder.ratingCountText.text = user.rating.toString()
 
             holder.itemView.setOnClickListener{
-                //Show screen with user info, habits, goals
-                if(user.name != getString(R.string.you)){
-                    val intent = Intent(context, ProfileActivity::class.java)
-                    intent.putExtra(C.USER, user)
-                    startActivity(intent)
-                }
+                //if(user.name != getString(R.string.you)){
+                val intent = Intent(context, ProfileActivity::class.java)
+                intent.putExtra(C.USER, user)
+                startActivity(intent)
+                //}
             }
 
         }
