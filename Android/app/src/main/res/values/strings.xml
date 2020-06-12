@@ -63,4 +63,8 @@
     <string name="profile">Profile</string>
     <string name="rating_pattern">Rating : %1$d</string>
     <string name="rating_place_pattern">Rating place : %1$d</string>
+    <string name="no_description">No description</string>
+    <string name="no_pluses">No pluses</string>
+    <string name="no_minuses">No minuses</string>
+    <string name="one_day_notification_error">You need to choose at least one day of notification</string>
 </resources>

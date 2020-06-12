@@ -74,62 +74,8 @@ class ProfilePagerFragment : Fragment(){
 
         override fun onBindViewHolder(holder: HabitHolder, position: Int) {
 
-            holder.itemTop.setOnClickListener{
-                if(holder.expandablePart.visibility == View.VISIBLE){
-                    holder.expandablePart.visibility = View.GONE
-                }else{
-                    holder.expandablePart.visibility = View.VISIBLE
-                }
-            }
-
             val habit = habits[holder.adapterPosition]
-            holder.name.text = habit.name
-            holder.reputation.text = getString(R.string.reputation_pattern, habit.reputation)
-            if(habit.isVoted){
-                if(habit.isLiked){
-                    holder.likeButton.setImageDrawable(resources.getDrawable(R.drawable.ic_like_green, null))
-                }else{
-                    holder.dislikeButton.setImageDrawable(resources.getDrawable(R.drawable.ic_dislike_red, null))
-                }
-            }
-            holder.description.text = habit.description
-            val pluses = StringBuilder()
-
-            for(i in 0 until habit.pluses.size){
-                if(i != 0){
-                    pluses.append("\n")
-                }
-                pluses.append(habit.pluses[i])
-            }
-            holder.pluses.text = pluses.toString()
-
-            val minuses = StringBuilder()
-            for(i in 0 until habit.minuses.size){
-                if(i != 0){
-                    pluses.append("\n")
-                }
-                pluses.append(habit.minuses[i])
-            }
-
-            holder.minuses.text = minuses.toString()
-            val time = StringBuilder()
-            for(i in 0 until habit.weekdays.size){
-                val weekday = when(habit.weekdays[i]){
-                    0 -> getString(R.string.monday)
-                    1 -> getString(R.string.tuesday)
-                    2 -> getString(R.string.wednesday)
-                    3 -> getString(R.string.thursday)
-                    4 -> getString(R.string.friday)
-                    5 -> getString(R.string.saturday)
-                    6 -> getString(R.string.sunday)
-                    else -> "Error"
-                }
-                if(i != 0){
-                    time.append(", ")
-                }
-            }
-            time.append("- ${habit.notifyTime}")
-            holder.dateText.text = time.toString()
+            holder.bind(habit)
 
         }
 
@@ -147,9 +93,88 @@ class ProfilePagerFragment : Fragment(){
             val likeButton : ImageView = itemView.findViewById(R.id.ProfileHabitLikes)
             val dislikeButton : ImageView = itemView.findViewById(R.id.ProfileHabitDislikes)
             val description : TextView = itemView.findViewById(R.id.ProfileHabitDescription)
-            val pluses : TextView = itemView.findViewById(R.id.ProfileHabitPluses)
-            val minuses : TextView = itemView.findViewById(R.id.ProfileHabitMinuses)
+            val plusesText : TextView = itemView.findViewById(R.id.ProfileHabitPluses)
+            val minusesText : TextView = itemView.findViewById(R.id.ProfileHabitMinuses)
             val dateText : TextView = itemView.findViewById(R.id.ProfileHabitDate)
+
+            private var isExpanded = false
+
+            fun bind(habit : Habit){
+
+                itemTop.setOnClickListener{
+                    expandablePart.visibility = if(isExpanded){
+                        View.GONE
+                    }else{
+                        View.VISIBLE
+                    }
+                    isExpanded = !isExpanded
+                }
+
+                name.text = habit.name
+                reputation.text = getString(R.string.reputation_pattern, habit.reputation)
+                if(habit.isVoted){
+                    if(habit.isLiked){
+                        likeButton.setImageDrawable(resources.getDrawable(R.drawable.ic_like_green, null))
+                    }else{
+                        dislikeButton.setImageDrawable(resources.getDrawable(R.drawable.ic_dislike_red, null))
+                    }
+                }
+
+                description.text = if(habit.description.isNotEmpty()){
+                    habit.description
+                }else{
+                    getString(R.string.no_description)
+                }
+
+                plusesText.text = if(habit.pluses.isNotEmpty()){
+                    val pluses = StringBuilder()
+
+                    for(i in 0 until habit.pluses.size){
+                        if(i != 0){
+                            pluses.append("\n")
+                        }
+                        pluses.append(habit.pluses[i])
+                    }
+                    pluses.toString()
+                }else{
+                    getString(R.string.no_pluses)
+                }
+
+                minusesText.text = if(habit.minuses.isNotEmpty()){
+                    val minuses = StringBuilder()
+                    for(i in 0 until habit.minuses.size){
+                        if(i != 0){
+                            minuses.append("\n")
+                        }
+                        minuses.append(habit.minuses[i])
+                    }
+
+                    minuses.toString()
+                }else{
+                    getString(R.string.no_minuses)
+                }
+
+
+                val time = StringBuilder()
+                for(i in 0 until habit.weekdays.size){
+                    if(i != 0){
+                        time.append(", ")
+                    }
+                    time.append(when(habit.weekdays[i]){
+                        0 -> getString(R.string.monday)
+                        1 -> getString(R.string.tuesday)
+                        2 -> getString(R.string.wednesday)
+                        3 -> getString(R.string.thursday)
+                        4 -> getString(R.string.friday)
+                        5 -> getString(R.string.saturday)
+                        6 -> getString(R.string.sunday)
+                        else -> "Error"
+                    })
+                }
+                time.append(" - ${habit.notifyTime}")
+                dateText.text = time.toString()
+
+            }
 
         }
 

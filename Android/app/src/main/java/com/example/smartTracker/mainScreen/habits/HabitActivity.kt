@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -143,6 +144,20 @@ class HabitActivity : AppCompatActivity() {
 
         for (day in 0..6) {
             toggleButtons[day].isChecked = habit.weekdays.contains(day)
+            toggleButtons[day].setOnCheckedChangeListener { buttonView, isChecked ->
+                if(!isChecked){
+                    var checkedButtonsCount = 0
+                    for(button in toggleButtons) {
+                        if (button.isChecked) {
+                            checkedButtonsCount++
+                        }
+                    }
+                    if(checkedButtonsCount == 0){
+                        Toast.makeText(baseContext, getString(R.string.one_day_notification_error), Toast.LENGTH_LONG).show()
+                        buttonView.isChecked = !isChecked
+                    }
+                }
+            }
         }
 
         if (habit.isPublic) {
