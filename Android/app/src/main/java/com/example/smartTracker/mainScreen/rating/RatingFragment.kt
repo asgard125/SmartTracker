@@ -99,9 +99,9 @@ class RatingFragment : Fragment() {
 
             if(user.name != getString(R.string.you)){
                 val wordToSpan = SpannableString("${user.name}#${user.userId}")
-                //Переделать границы
-
-                wordToSpan.setSpan(ForegroundColorSpan(Color.GRAY), user.name.length, wordToSpan.length-1, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+                val start = user.name.length
+                val end = wordToSpan.length
+                wordToSpan.setSpan(ForegroundColorSpan(Color.GRAY), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 holder.nameAndIdText.text = wordToSpan
             }else{
                 holder.nameAndIdText.text = user.name
@@ -111,6 +111,11 @@ class RatingFragment : Fragment() {
 
             holder.itemView.setOnClickListener{
                 //Show screen with user info, habits, goals
+                if(user.name != getString(R.string.you)){
+                    val intent = Intent(context, ProfileActivity::class.java)
+                    intent.putExtra(C.USER, user)
+                    startActivity(intent)
+                }
             }
 
         }

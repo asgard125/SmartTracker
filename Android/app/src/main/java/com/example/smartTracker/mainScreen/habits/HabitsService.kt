@@ -6,6 +6,7 @@ import android.content.Intent
 import android.util.Log
 import com.example.smartTracker.data.Habit
 import com.example.smartTracker.objects.C
+import com.example.smartTracker.objects.Database
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -17,11 +18,9 @@ class HabitsService : IntentService("HabitsService") {
     override fun onHandleIntent(intent: Intent?) {
         val preferences = applicationContext.getSharedPreferences(C.MAIN_PREFERENCES, Context.MODE_PRIVATE)
         val apiKey = preferences?.getString(C.API_KEY, null)
-        val model = HabitsModel(applicationContext)
         when (intent?.extras?.getInt(C.TASK_TYPE)) {
             C.GET_ALL_HABITS_TASK -> {
-                val model = HabitsModel(applicationContext)
-                val habits = model.getAllHabits()
+                val habits = Database.HabitsModel.getAllHabits()
                 val responseIntent = Intent()
                 responseIntent.action = C.ACTION_HABITS_SERVICE
                 responseIntent.addCategory(Intent.CATEGORY_DEFAULT)
@@ -31,21 +30,21 @@ class HabitsService : IntentService("HabitsService") {
             C.ADD_DEFAULT_HABIT_TASK -> {
                 val habit = intent.getParcelableExtra<Habit>(C.habit)!!
 
-                val pluses = model.listToString(habit.pluses)
-                val minuses = model.listToString(habit.minuses)
+                val pluses = Database.listToString(habit.pluses)
+                val minuses = Database.listToString(habit.minuses)
                 val habitType = if (habit.isPublic) "public" else "private"
                 val weekdaysString = ArrayList<String>()
                 for (i in 0 until habit.weekdays.size) {
                     weekdaysString.add(habit.weekdays[i].toString())
                 }
-                val weekdays = model.listToString(weekdaysString)
+                val weekdays = Database.listToString(weekdaysString)
                 val map = mapOf(
                     C.API_KEY to apiKey,
                     C.name to habit.name,
                     C.description to habit.description,
                     C.pluses to pluses,
                     C.minuses to minuses,
-                    C.type to habitType,
+                    C.habitType to habitType,
                     C.weekdays to weekdays,
                     C.notifyTime to habit.notifyTime,
                     C.muted to habit.isMuted
@@ -78,7 +77,7 @@ class HabitsService : IntentService("HabitsService") {
                             "HabitsService : addDefaultHabit, server id is $serverId"
                         )
 
-                        model.setServerId(habit.id, serverId)
+                        Database.HabitsModel.setServerId(habit.id, serverId)
                     } else {
                         Log.d("SmartTracker", responseJson.getString(C.MESSAGE))
                     }
@@ -91,7 +90,7 @@ class HabitsService : IntentService("HabitsService") {
             C.DELETE_HABIT_TASK -> {
                 val id = intent.getLongExtra(C.id, -1)
 
-                val serverId = model.deleteHabitAndGetServerId(id)
+                val serverId = Database.HabitsModel.deleteHabitAndGetServerId(id)
 
                 Log.d("SmartTracker", "HabitsService : server id of this habit is $serverId")
 
@@ -127,28 +126,28 @@ class HabitsService : IntentService("HabitsService") {
                 val serverId = if (habit.serverId != (-1).toLong()) {
                     habit.serverId
                 } else {
-                    model.getServerId(habit.id)
+                    Database.HabitsModel.getServerId(habit.id)
                 }
 
-                model.updateHabit(habit)
+                Database.HabitsModel.updateHabit(habit)
 
-                Log.d("SmartTracker", "HabitsService : server id of this habit is $serverId")
+                Log.d("SmartTracker", "HabitsService : changeHabit, server id of this habit is $serverId")
 
-                val pluses = model.listToString(habit.pluses)
-                val minuses = model.listToString(habit.minuses)
+                val pluses = Database.listToString(habit.pluses)
+                val minuses = Database.listToString(habit.minuses)
                 val habitType = if (habit.isPublic) "public" else "private"
                 val weekdaysString = ArrayList<String>()
                 for (i in 0 until habit.weekdays.size) {
                     weekdaysString.add(habit.weekdays[i].toString())
                 }
-                val weekdays = model.listToString(weekdaysString)
+                val weekdays =  Database.listToString(weekdaysString)
                 val map = mapOf(
                     C.API_KEY to apiKey,
                     C.name to habit.name,
                     C.description to habit.description,
                     C.pluses to pluses,
                     C.minuses to minuses,
-                    C.type to habitType,
+                    C.habitType to habitType,
                     C.weekdays to weekdays,
                     C.notifyTime to habit.notifyTime,
                     C.muted to habit.isMuted
@@ -183,8 +182,8 @@ class HabitsService : IntentService("HabitsService") {
             }
             C.COMPLETE_HABIT_TASK ->{
                 val id = intent.getLongExtra(C.id, -1)
-                val serverId = model.getServerId(id)
-                model.completeHabit(id)
+                val serverId =  Database.HabitsModel.getServerId(id)
+                Database.HabitsModel.completeHabit(id)
 
                 val map = mapOf(C.API_KEY to apiKey)
                 val json = JSONObject(map)

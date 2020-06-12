@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.smartTracker.mainScreen.MainActivity
 import com.example.smartTracker.R
 import com.example.smartTracker.objects.C
+import com.example.smartTracker.objects.Database
 
 class SignActivity : AppCompatActivity(), SignFragmentCallback{
 
@@ -25,7 +26,8 @@ class SignActivity : AppCompatActivity(), SignFragmentCallback{
                 }
                 supportFragmentManager.beginTransaction().add(R.id.SignContainer, SignInFragment(), C.SIGN_IN_TASK).commit()
             }else{
-                supportFragmentManager.beginTransaction().add(R.id.SignContainer, UpdateFragment(), C.SIGN_IN_TASK).commit()
+                supportFragmentManager.beginTransaction().add(R.id.SignContainer, UpdateFragment(), "UpdateFragment").commit()
+                isNeedUpdate = true
             }
         }
 
@@ -47,7 +49,6 @@ class SignActivity : AppCompatActivity(), SignFragmentCallback{
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_sign)
 
         filter = IntentFilter(C.ACTION_SIGN_SERVICE+"1")

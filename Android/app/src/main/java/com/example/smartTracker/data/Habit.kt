@@ -17,4 +17,6 @@ data class Habit(var id : Long = -1,
                  var isBooting : Boolean = true,
                  var isDone : Boolean = false,
                  var isPublic : Boolean = true,
-                 var isMuted : Boolean = true) : Parcelable
+                 var isMuted : Boolean = true,
+                 var isVoted : Boolean = false,
+                 var isLiked : Boolean = true) : Parcelable

@@ -19,6 +19,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.smartTracker.data.Habit
 import com.example.smartTracker.R
 import com.example.smartTracker.objects.C
+import com.example.smartTracker.objects.Database
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.*
 import kotlin.collections.ArrayList
@@ -32,24 +33,32 @@ class HabitsFragment : Fragment(){
 
     private lateinit var adapter : HabitsAdapter
 
-    private lateinit var model : HabitsModel
+    private lateinit var notificationManager: HabitsNotificationManager
 
     private lateinit var filter : IntentFilter
     private var receiver = object : BroadcastReceiver(){
 
         override fun onReceive(context: Context?, intent: Intent?) {
-            var habits = intent?.extras?.getParcelableArrayList<Habit>(C.habits)
-            if(habits == null){
-                habits = ArrayList()
+            when(intent?.action){
+                C.ACTION_HABITS_SERVICE ->{
+                    var habits = intent?.extras?.getParcelableArrayList<Habit>(C.habits)
+                    if(habits == null){
+                        habits = ArrayList()
+                    }
+                    if(!this@HabitsFragment::adapter.isInitialized){
+                        adapter = HabitsAdapter(habits)
+                        recycler.adapter = adapter
+                    }else{
+                        adapter.habits = habits
+                        adapter.notifyDataSetChanged()
+                    }
+                    fab.isEnabled = true
+                }
+                C.ACTION_NEW_DAY_UPDATE_UI ->{
+                    val requestHabitsIntent = Intent(context, HabitsService::class.java)
+                    activity?.startService(requestHabitsIntent.putExtra(C.TASK_TYPE, C.GET_ALL_HABITS_TASK))
+                }
             }
-            if(!this@HabitsFragment::adapter.isInitialized){
-                adapter = HabitsAdapter(habits)
-                recycler.adapter = adapter
-            }else{
-                adapter.habits = habits
-                adapter.notifyDataSetChanged()
-            }
-            fab.isEnabled = true
         }
 
     }
@@ -58,13 +67,14 @@ class HabitsFragment : Fragment(){
         super.onCreate(savedInstanceState)
 
         filter = IntentFilter(C.ACTION_HABITS_SERVICE)
+        filter.addAction(C.ACTION_NEW_DAY_UPDATE_UI)
         filter.addCategory(Intent.CATEGORY_DEFAULT)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         root = inflater.inflate(R.layout.single_fab_recycler, container, false)
 
-        model = HabitsModel(context)
+        notificationManager = HabitsNotificationManager(context)
 
         recycler = root.findViewById(R.id.SingleFabRecycler)
         fab = root.findViewById(R.id.SingleFabRecyclerButton)
@@ -77,7 +87,7 @@ class HabitsFragment : Fragment(){
 
         fab.isEnabled = false
         fab.setOnClickListener{
-            val newHabit = model.addDefaultHabitAndReturn()
+            val newHabit = Database.HabitsModel.addDefaultHabitAndReturn()
             adapter.habits.add(newHabit)
             adapter.notifyItemInserted(adapter.habits.size)
             activity?.startService(addNewHabitIntent.putExtra(C.TASK_TYPE, C.ADD_DEFAULT_HABIT_TASK).putExtra(C.habit, newHabit))
@@ -139,6 +149,7 @@ class HabitsFragment : Fragment(){
                 if(isChecked){
                     Toast.makeText(context, getString(R.string.habit_completed), Toast.LENGTH_SHORT).show()
                     checkbox.isEnabled = false
+                    notificationManager.deleteTodayAlarm(habit)
                     val completedIntent = Intent(context, HabitsService::class.java)
                     activity?.startService(completedIntent.putExtra(C.TASK_TYPE, C.COMPLETE_HABIT_TASK).putExtra(C.id, habit.id))
                 }
@@ -189,10 +200,17 @@ class HabitsFragment : Fragment(){
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(requestCode == 1 && data != null && resultCode == Activity.RESULT_OK){
-            val habit = data.getParcelableExtra<Habit>("Habit")
+            val needToUpdate = data.getBooleanExtra("needToUpdate", false)
             val updatedPosition = data.getIntExtra("Position", -1)
-            adapter.habits[updatedPosition] = habit
-            adapter.notifyItemChanged(updatedPosition)
+            if(updatedPosition != -1 && !needToUpdate) {
+                val habit = data.getParcelableExtra<Habit>("Habit")
+                adapter.habits[updatedPosition] = habit
+                adapter.notifyItemChanged(updatedPosition)
+            }
+            if(needToUpdate){
+                val requestHabitsIntent = Intent(context, HabitsService::class.java)
+                activity?.startService(requestHabitsIntent.putExtra(C.TASK_TYPE, C.GET_ALL_HABITS_TASK))
+            }
         }
     }
 

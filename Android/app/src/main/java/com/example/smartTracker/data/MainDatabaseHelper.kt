@@ -19,7 +19,7 @@ class MainDatabaseHelper(context : Context?) : SQLiteOpenHelper(context, "main_d
                 "${C.votes} INT," + // 123
                 "${C.reputation} INT," + // 34
                 "${C.booting} INTEGER," + // 1
-                "${C.type} TEXT," + // public
+                "${C.habitType} TEXT," + // public
                 "${C.muted} INTEGER," + // 1
                 "${C.isDone} INTEGER)") //
     }

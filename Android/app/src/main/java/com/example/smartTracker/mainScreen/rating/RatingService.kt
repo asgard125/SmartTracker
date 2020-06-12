@@ -45,7 +45,7 @@ class RatingService : IntentService("RatingService") {
 
             val currentUserPlace = responseJson.getInt(C.CURRENT_USER_PLACE)
             val currentUserRating = responseJson.getLong(C.CURRENT_USER_RATING)
-            val currentUserId = preferences.getLong(C.USER_ID, 0)
+            val currentUserId = preferences.getLong(C.ID, 0)
 
             val currentUser = User(
                 userId = currentUserId, name = application.getString(R.string.you),
@@ -59,7 +59,7 @@ class RatingService : IntentService("RatingService") {
             var rating : Long
             for(i in 0 until jsonUsers.length()){
                 jsonUser = jsonUsers.getJSONObject(i)
-                id = jsonUser.getLong(C.USER_ID)
+                id = jsonUser.getLong(C.ID)
                 name = jsonUser.getString(C.NAME)
                 rating = jsonUser.getLong(C.RATING)
                 if(id != currentUserId){

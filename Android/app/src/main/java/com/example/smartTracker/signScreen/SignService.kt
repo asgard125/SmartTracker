@@ -160,7 +160,7 @@ class SignService : IntentService("SignService"){
             val responseJson = JSONObject(response.body?.string())
 
             val jsonUser = responseJson.getJSONObject(C.USER)
-            user.userId = jsonUser.getLong(C.USER_ID)
+            user.userId = jsonUser.getLong(C.ID)
             user.name = jsonUser.getString(C.NAME)
             user.rating = jsonUser.getLong(C.RATING)
             return user
@@ -172,7 +172,7 @@ class SignService : IntentService("SignService"){
     private fun saveBasicUserInfo(user : User){
         val sharedPreferences = applicationContext.getSharedPreferences(C.MAIN_PREFERENCES, Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
-        editor.putLong(C.USER_ID, user.userId)
+        editor.putLong(C.ID, user.userId)
         editor.putString(C.API_KEY, user.apiKey)
         editor.putString(C.LOGIN, user.login)
         editor.putString(C.NAME, user.name)

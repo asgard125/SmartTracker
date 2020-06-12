@@ -3,8 +3,7 @@ package com.example.smartTracker.mainScreen.habits
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
 import android.os.Bundle
 import android.os.Handler
 import android.text.Editable
@@ -45,7 +44,15 @@ class HabitActivity : AppCompatActivity() {
     private lateinit var habit: Habit
     private var updatedPosition: Int = 0
 
-    private lateinit var model : HabitsModel
+    private var needToUpdateList = false
+    private lateinit var filter : IntentFilter
+    private val receiver = object : BroadcastReceiver(){
+
+        override fun onReceive(context: Context?, intent: Intent?) {
+            needToUpdateList = true
+        }
+
+    }
 
     private var isMuted = false
     private lateinit var notificationManager: HabitsNotificationManager
@@ -57,11 +64,10 @@ class HabitActivity : AppCompatActivity() {
                 when (which) {
                     Dialog.BUTTON_POSITIVE -> {
                         saveResult(newHabit)
-                        notificationManager.updateHabitAlarms(habit, newHabit)
                         finish()
                     }
                     Dialog.BUTTON_NEGATIVE -> {
-                        notificationManager.updateHabitAlarms(habit, newHabit)
+                        setResult(Activity.RESULT_OK, Intent().putExtra("needToUpdate", needToUpdateList))
                         finish()
                     }
                 }
@@ -74,6 +80,7 @@ class HabitActivity : AppCompatActivity() {
                     .create()
             dialog.show()
         } else {
+            setResult(Activity.RESULT_OK, Intent().putExtra("needToUpdate", needToUpdateList))
             finish()
         }
     }
@@ -82,7 +89,8 @@ class HabitActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_habit)
 
-        model = HabitsModel(baseContext)
+        filter = IntentFilter(C.ACTION_NEW_DAY_UPDATE_UI)
+        filter.addCategory(Intent.CATEGORY_DEFAULT)
 
         notificationManager = HabitsNotificationManager(baseContext)
 
@@ -122,17 +130,6 @@ class HabitActivity : AppCompatActivity() {
         plusesRecycler.layoutManager = LinearLayoutManager(baseContext)
         minusesRecycler.layoutManager = LinearLayoutManager(baseContext)
 
-        /*Removes lags from transition between list screen and edit screen, by delaying inflating recycler view's items
-        Handler().postDelayed({
-            plusesAdapter = PlusesMinusesAdapter(ArrayList(habit.pluses), PLUSES)
-            minusesAdapter = PlusesMinusesAdapter(ArrayList(habit.minuses), MINUSES)
-
-            plusesRecycler.adapter = plusesAdapter
-            minusesRecycler.adapter = minusesAdapter
-
-        }, 1000)
-        Removes lags from transition from list screen to edit screen, by delaying inflating recycler view*/
-
         plusesAdapter = PlusesMinusesAdapter(ArrayList(habit.pluses), PLUSES)
         minusesAdapter = PlusesMinusesAdapter(ArrayList(habit.minuses), MINUSES)
 
@@ -156,6 +153,16 @@ class HabitActivity : AppCompatActivity() {
 
     }
 
+    override fun onStart() {
+        super.onStart()
+        registerReceiver(receiver, filter)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unregisterReceiver(receiver)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.habit_menu, menu)
 
@@ -176,18 +183,17 @@ class HabitActivity : AppCompatActivity() {
                 val newHabit = getNewHabit()
                 if (habit != newHabit) {
                     saveResult(newHabit)
+                }else{
+                    setResult(Activity.RESULT_OK, Intent().putExtra("needToUpdate", needToUpdateList))
                 }
-                notificationManager.updateHabitAlarms(habit, newHabit)
                 finish()
             }
             R.id.HabitMuteItem -> {
                 isMuted = !isMuted
                 val title = getString(if (isMuted) R.string.unmute_habit else R.string.mute_habit)
                 val drawable = if (isMuted) {
-                    notificationManager.unmuteHabit(habit)
                     getDrawable(R.drawable.ic_notifications_off)
                 } else {
-                    notificationManager.muteHabit(habit)
                     getDrawable(R.drawable.ic_notifications)
                 }
                 item.icon = drawable
@@ -199,7 +205,31 @@ class HabitActivity : AppCompatActivity() {
     }
 
     private fun saveResult(newHabit: Habit) {
-        intent.putExtras(bundleOf("Habit" to newHabit, "Position" to updatedPosition))
+
+        if(newHabit.weekdays == habit.weekdays && newHabit.notifyTime == habit.notifyTime && newHabit.name == habit.name){
+            if(habit.isMuted != newHabit.isMuted){
+               if(newHabit.isMuted){
+                   notificationManager.deleteAlarms(habit)
+               }else{
+                   notificationManager.setNewAlarms(habit)
+               }
+            }
+        }else{
+            if(habit.isMuted != newHabit.isMuted){
+                if(newHabit.isMuted){
+                    notificationManager.deleteAlarms(habit)
+                }else{
+                    notificationManager.setNewAlarms(newHabit)
+                }
+            }else{
+                if(!newHabit.isMuted){
+                    notificationManager.deleteAlarms(habit)
+                    notificationManager.setNewAlarms(newHabit)
+                }
+            }
+        }
+
+        intent.putExtras(bundleOf("Habit" to newHabit, "Position" to updatedPosition, "needToUpdate" to needToUpdateList))
         setResult(Activity.RESULT_OK, intent)
         val intent = Intent(baseContext, HabitsService::class.java)
         startService(intent.putExtra(C.TASK_TYPE, C.UPDATE_HABIT_TASK).putExtra(C.habit, newHabit))

@@ -5,6 +5,7 @@ import java.lang.StringBuilder
 object C {
 
     const val SECRET_KEY = "smarttrackerbetav1.0_oasf13dl1s"
+    const val ACTION_NEW_DAY_UPDATE_UI = "com.example.smartTracker.DataUpdateReceiver"
 
     //HTTP
     const val OK_CODE = 200
@@ -18,6 +19,7 @@ object C {
     const val RATING_URL = "https://smarttracker.herokuapp.com/api/v1/users"
     const val COMPLETE_HABIT_URL = "https://smarttracker.herokuapp.com/habit_completed/"
     const val CHECK_SECRET_KEY_URL = "https://smarttracker.herokuapp.com/check_secret_key/"
+    const val GET_ALL_HABITS_URL = "https://smarttracker.herokuapp.com/api/v1/habits"
 
     const val MESSAGE = "message"
     const val RESULT = "result"
@@ -34,7 +36,8 @@ object C {
 
     //User Info
     const val USER = "user"
-    const val USER_ID = "id"
+    const val ID = "id"
+    const val USER_ID = "user_id"
     const val NAME = "name"
     const val LOGIN = "login"
     const val PASSWORD = "password"
@@ -83,7 +86,7 @@ object C {
     const val description = "description"
     const val pluses = "pluses"
     const val minuses = "minuses"
-    const val type = "type"
+    const val habitType = "habit_type"
     const val booting = "booting"
     const val weekdays = "weekdays"
     const val notifyTime = "notify_time"
@@ -93,5 +96,11 @@ object C {
     const val isDone = "isDone"
     const val serverId = "server_id"
     //Habits database
+
+    //Goals database
+    const val goals = "goals"
+    //Goals database
+
+    const val ACTION_PROFILE_SERVICE = "com.example.smartTracker.mainScreen.rating.ProfileService"
 
 }

@@ -1,5 +1,9 @@
 package com.example.smartTracker.mainScreen
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -8,11 +12,14 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import com.example.smartTracker.DateUpdateReceiver
 import com.example.smartTracker.mainScreen.habits.HabitsFragment
 import com.example.smartTracker.R
 import com.example.smartTracker.mainScreen.rating.RatingFragment
+import com.example.smartTracker.objects.Database
 import com.google.android.material.navigation.NavigationView
 import java.lang.Exception
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,6 +38,18 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val updateIntent = Intent(applicationContext, DateUpdateReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(applicationContext, 0, updateIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.add(Calendar.DAY_OF_YEAR, 1)
+        (getSystemService(Context.ALARM_SERVICE) as AlarmManager).setRepeating(AlarmManager.RTC, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, pendingIntent)
+
+        Database.setUpDatabase(applicationContext)
+
         toolbar = findViewById(R.id.MainToolBar)
         drawer = findViewById(R.id.MainDrawer)
         navigationView = findViewById(R.id.MainNavigation)

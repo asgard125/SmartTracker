@@ -56,4 +56,11 @@
     <string name="you">You</string>
     <string name="habit_completed">Habit completed!</string>
     <string name="update_text">This version of the app is outdated, please visit https://vk.com/greamteamdev \nfor more information</string>
+    <string name="habit_notification_text">It\'s time to make your habit done</string>
+    <string name="pluses">Pluses</string>
+    <string name="minuses">Minuses</string>
+    <string name="reputation_pattern">Reputation : %1$d</string>
+    <string name="profile">Profile</string>
+    <string name="rating_pattern">Rating : %1$d</string>
+    <string name="rating_place_pattern">Rating place : %1$d</string>
 </resources>
