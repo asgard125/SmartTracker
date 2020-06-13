@@ -94,13 +94,26 @@ class HabitListResource(Resource):
         else:
             habits = session.query(Habit).filter(Habit.user_id == args['user_id'],
                                                  Habit.type == args['habit_type']).all()
+        # voted_list = []
+        # for habit in habits:
+        #     if habit.voted_users is not None:
+        #         already_voted = [i.split(':') for i in habit.voted_users.split(', ')]
+        #         if any(str(user_by_api.id) in i[0] for i in already_voted):
+        #             voted_list.append({'voted': True, 'vote_type': [i[1] for i in already_voted if str(user_by_api.id) in i[0]]})
+        #         else:
+        #             voted_list.append({'voted': False, 'vote_type': None})
+        #     else:
+        #         voted_list.append({'voted': False, 'vote_type': None})
         if args['info_type'] == 'detail':
+            habits = [habit.to_dict(
+                only=('id', 'name', 'start_date', 'description', 'pluses', 'minuses', 'type', 'booting', 'weekdays',
+                      'notify_time', 'votes', 'reputation', 'muted')) for habit in habits]
             return jsonify({'habits': [habit.to_dict(
                 only=('id', 'name', 'start_date', 'description', 'pluses', 'minuses', 'type', 'booting', 'weekdays',
                       'notify_time', 'votes', 'reputation', 'muted')) for habit in habits]})
         else:
             return jsonify({'habits': [habit.to_dict(
-                only=('id', 'name' 'type', 'booting', 'weekdays',
+                only=('id', 'name', 'type', 'booting', 'weekdays',
                       'notify_time', 'reputation', 'muted')) for habit in habits]})
 
     def post(self):

@@ -7,3 +7,5 @@ requests
 SQLAlchemy-serializer
 werkzeug
 psycopg2
+schedule
+apscheduler

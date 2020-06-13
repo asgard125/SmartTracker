@@ -24,7 +24,9 @@ class Habit(SqlAlchemyBase, UserMixin, SerializerMixin):
     votes = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     reputation = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     voted_users = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    muted = sqlalchemy.Column(sqlalchemy.String, default=False)
+    muted = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
+    done = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
+    done_time = sqlalchemy.Column(sqlalchemy.DateTime, nullable=True)
     user = orm.relation('User')
 
     def change_data(self, name, description, pluses, minuses, type, weekdays, notify_time, muted):
@@ -40,6 +42,8 @@ class Habit(SqlAlchemyBase, UserMixin, SerializerMixin):
             habit.minuses = minuses
         if type:
             habit.type = type
+            if type == 'private':
+                habit.booting = False
         if weekdays:
             habit.weekdays = weekdays
         if notify_time:

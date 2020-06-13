@@ -21,10 +21,12 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     login = sqlalchemy.Column(sqlalchemy.String,
                               index=True, unique=True, nullable=False)
     password = sqlalchemy.Column(sqlalchemy.String, nullable=False)
-    name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    name = sqlalchemy.Column(sqlalchemy.String, nullable=False)
+    email = sqlalchemy.Column(sqlalchemy.String, nullable=True, unique=True)
     rating = sqlalchemy.Column(sqlalchemy.Integer, default=0)
     api_key = sqlalchemy.Column(sqlalchemy.String, nullable=True, unique=True)
     habit_limit = sqlalchemy.Column(sqlalchemy.Integer, default=10)
+    vote_limit = sqlalchemy.Column(sqlalchemy.Integer, default=20)
 
     habits = orm.relation('Habit', back_populates='user', lazy='subquery')
 
@@ -46,7 +48,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
         user.api_key = self.api_key
         session.commit()
 
-    def change_data(self, habit_limit=None, rating=None, name=None, password=None, login=None):
+    def change_data(self, habit_limit=None, rating=None, name=None, password=None, login=None, vote_limit=None):
         session = db_session.create_session()
         user = session.query(User).get(self.id)
         if name is not None:
@@ -59,6 +61,8 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
             user.password = password
         if login is not None:
             user.login = login
+        if vote_limit is not None:
+            user.vote_limit = vote_limit
         session.commit()
 
     @staticmethod

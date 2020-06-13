@@ -11,7 +11,8 @@ from flask import jsonify
 from werkzeug.security import check_password_hash, generate_password_hash
 from rating_formulas import habit_rating
 from settings import SECRET_KEY
-
+from apscheduler.schedulers.background import BackgroundScheduler
+from validations import password_validation, login_validation, name_validation
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = SECRET_KEY
@@ -39,14 +40,26 @@ def register():
     parser.add_argument("password", required=True)
     parser.add_argument("name", required=True)
     args = parser.parse_args()
+    login = args['login'].strip()
+    password = args['password'].strip()
+    name = args['name'].strip()
     session = db_session.create_session()
-    check_user = session.query(User).filter(User.login == args['login'].strip()).first()
+    check_user = session.query(User).filter(User.login.lower() == args['login'].lower()).first()
     if check_user:
         return jsonify({'result': 'FAIL', 'message': 'user with this login already exists'})
+    login_valid = login_validation(login)
+    if login_valid[0] != 'OK':
+        return jsonify({'result': {login_valid[0]}, 'message': {login_valid[1]}})
+    password_valid = password_validation(password)
+    if password_valid[0] != 'OK':
+        return jsonify({'result': {password_valid[0]}, 'message': {password_valid[1]}})
+    name_valid = name_validation(name)
+    if login_valid[0] != 'OK':
+        return jsonify({'result': {name_valid[0]}, 'message': {name_valid[1]}})
     user = User(
-        name=args['name'],
-        login=args['login'].strip(),
-        password=generate_password_hash(args['password'])
+        name=name,
+        login=login,
+        password=generate_password_hash(password)
     )
     session.add(user)
     session.commit()
@@ -77,14 +90,14 @@ def vote_for_habit(habit_id):
     user = User.get_by_api(args['api_key'])
     if user is None:
         abort(403, message='Invalid api key')
+   # if user.vote_limit <= 0:
+      #  return jsonify({'result': 'FAIL', 'message': 'vote limit was reached on this week'})
     if habit.user_id == user.id:
         return jsonify({'result': 'FAIL', 'message': 'cant vote on self habit'})
     if habit.voted_users is not None:
-        already_voted = habit.voted_users.split(', ')
-        if str(user.id) in already_voted:
+        already_voted = [i.split(':') for i in habit.voted_users.split(', ')]
+        if any(str(user.id) in i[0] for i in already_voted):
             return jsonify({'result': 'FAIL', 'message': 'already voted on this habit'})
-        else:
-            habit.voted_users += f', {user.id}'
     else:
         habit.voted_users = str(user.id)
     if args['vote_type'] == 'positive':
@@ -92,6 +105,8 @@ def vote_for_habit(habit_id):
     else:
         habit.reputation -= 1
     habit.votes += 1
+    habit.voted_users += f', {user.id}:{args["vote_type"]}'
+    # user.change_data(vote_limit = user.vote_limit - 1)
     session.commit()
     return jsonify({'result': "OK"})
 
@@ -113,8 +128,14 @@ def habit_completed(habit_id):
         abort(403, 'Invalid api key')
     # if weekday_today not in habit.weekdays:
     #     return jsonify({'result': 'FAIL', 'message': 'This habit is not scheduled for today'})
-    user.change_data(rating=user.rating + habit_rating(len(habit.weekdays.split(', ')), habit.votes, habit.reputation))
+    if habit.booting:
+        user.change_data(rating=user.rating + habit_rating(len(habit.weekdays.split(', ')), habit.votes, habit.reputation))
     return jsonify({'result': 'OK'})
+
+
+@app.route('/email_verification')
+def email_verification():
+    pass
 
 
 api.add_resource(user_api.UserListResource, '/api/v1/users')
