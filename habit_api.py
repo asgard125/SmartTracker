@@ -105,9 +105,6 @@ class HabitListResource(Resource):
         #     else:
         #         voted_list.append({'voted': False, 'vote_type': None})
         if args['info_type'] == 'detail':
-            habits = [habit.to_dict(
-                only=('id', 'name', 'start_date', 'description', 'pluses', 'minuses', 'type', 'booting', 'weekdays',
-                      'notify_time', 'votes', 'reputation', 'muted')) for habit in habits]
             return jsonify({'habits': [habit.to_dict(
                 only=('id', 'name', 'start_date', 'description', 'pluses', 'minuses', 'type', 'booting', 'weekdays',
                       'notify_time', 'votes', 'reputation', 'muted')) for habit in habits]})
