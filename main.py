@@ -44,7 +44,7 @@ def register():
     password = args['password'].strip()
     name = args['name'].strip()
     session = db_session.create_session()
-    check_user = session.query(User).filter(User.login.lower() == args['login'].lower()).first()
+    check_user = session.query(User).filter(User.login == login).first()
     if check_user:
         return jsonify({'result': 'FAIL', 'message': 'user with this login already exists'})
     login_valid = login_validation(login)
