@@ -14,6 +14,7 @@ def login_validation(login):
         return {'result': 'FAIL', 'message': 'Login must be at least 3 characters long'}
     if not login.isalnum():
         return {'result': 'FAIL', 'message': 'Login can only consist of letters and symbols'}
+    return {'result': 'OK'}
 
 
 def name_validation(name):
@@ -21,7 +22,7 @@ def name_validation(name):
         return {'result': 'FAIL', 'message': 'Name must be at least 3 characters long'}
     if not name.isalnum():
         return {'result': 'FAIL', 'message': 'Name can only consist of letters and symbols'}
-
+    return {'result': 'OK'}
 
 def email_validation(email):
     pass

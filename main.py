@@ -48,13 +48,13 @@ def register():
     if check_user:
         return jsonify({'result': 'FAIL', 'message': 'user with this login already exists'})
     login_valid = login_validation(login)
-    if login_valid[0] != 'OK':
+    if login_valid['result'] != 'OK':
         return jsonify({'result': {login_valid[0]}, 'message': {login_valid[1]}})
     password_valid = password_validation(password)
-    if password_valid[0] != 'OK':
+    if password_valid['result'] != 'OK':
         return jsonify({'result': {password_valid[0]}, 'message': {password_valid[1]}})
     name_valid = name_validation(name)
-    if login_valid[0] != 'OK':
+    if name_valid['result'] != 'OK':
         return jsonify({'result': {name_valid[0]}, 'message': {name_valid[1]}})
     user = User(
         name=name,
