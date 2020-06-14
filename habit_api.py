@@ -82,7 +82,7 @@ class HabitListResource(Resource):
         parser.add_argument("habit_type", required=True, choices=('public', 'private', 'all'))
         parser.add_argument("info_type", required=True, choices=('short', 'detail'))
         parser.add_argument("api_key", required=True)
-        parser.add_argument("user_id", required=True, type=int)
+        parser.add_argument("user_id", required=False, type=int)
         args = parser.parse_args()
         session = db_session.create_session()
         user_by_api = check_api_key(args['api_key'])
@@ -100,6 +100,10 @@ class HabitListResource(Resource):
                                                  Habit.type == args['habit_type']).all()
         habits_list = []
         for habit in habits:
+            if habit.done:
+                delta = datetime.datetime.now() - habit.done_time
+                if delta.total_seconds() // 3600 > 15:
+                    habit.change_data(done=False)
             if args['info_type'] == 'detail':
                 dict_habit = habit.to_dict(
                     only=('id', 'name', 'start_date', 'description', 'pluses', 'minuses', 'type', 'booting', 'weekdays',

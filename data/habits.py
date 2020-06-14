@@ -30,7 +30,7 @@ class Habit(SqlAlchemyBase, UserMixin, SerializerMixin):
     done_time = sqlalchemy.Column(sqlalchemy.DateTime, nullable=True)
     user = orm.relation('User')
 
-    def change_data(self, name, description, pluses, minuses, type, weekdays, notify_time, muted):
+    def change_data(self, name, description, pluses, minuses, type, weekdays, notify_time, muted, done):
         session = db_session.create_session()
         habit = session.query(Habit).get(self.id)
         if name != habit.name or description != habit.description or weekdays != habit.weekdays:
@@ -53,6 +53,10 @@ class Habit(SqlAlchemyBase, UserMixin, SerializerMixin):
             habit.notify_time = notify_time
         if muted is not None:
             habit.muted = muted
+        if done is not None:
+            habit.done = done
+            if done is True:
+                habit.done_time = datetime.datetime.now()
         session.commit()
 
     def check_user_vote(self, user_id):
