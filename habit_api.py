@@ -130,7 +130,6 @@ class HabitListResource(Resource):
             booting = True
         else:
             booting = False
-        start_date = datetime.datetime.today()
         session = db_session.create_session()
         user = check_api_key(args['api_key'])
         if user.habit_limit == 0:
@@ -144,7 +143,6 @@ class HabitListResource(Resource):
         habit.booting = booting
         habit.weekdays = args['weekdays']
         habit.notify_time = args['notify_time']
-        habit.start_date = start_date
         habit.muted = args['muted']
         user.habit_limit -= 1
         user.habits.append(habit)
