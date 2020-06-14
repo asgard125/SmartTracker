@@ -93,19 +93,19 @@ def vote_for_habit(habit_id):
    # if user.vote_limit <= 0:
       #  return jsonify({'result': 'FAIL', 'message': 'vote limit was reached on this week'})
     if habit.user_id == user.id:
-        return jsonify({'result': 'FAIL', 'message': 'cant vote on self habit'})
-    if habit.voted_users is not None:
-        already_voted = [i.split(':') for i in habit.voted_users.split(', ')]
-        if any(str(user.id) in i[0] for i in already_voted):
-            return jsonify({'result': 'FAIL', 'message': 'already voted on this habit'})
-    else:
+        return jsonify({'result': 'FAIL', 'message': 'can not vote on self habit'})
+    current_user_vote = habit.check_user_vote(user.id)
+    if current_user_vote['voted'] is True:
+        return jsonify({'result': 'FAIL', 'message': 'You have already voted on this habit'})
+    if habit.voted_users is None:
         habit.voted_users = str(user.id)
+    else:
+        habit.voted_users += f', {user.id}:{args["vote_type"]}'
     if args['vote_type'] == 'positive':
         habit.reputation += 1
     else:
         habit.reputation -= 1
     habit.votes += 1
-    habit.voted_users += f', {user.id}:{args["vote_type"]}'
     # user.change_data(vote_limit = user.vote_limit - 1)
     session.commit()
     return jsonify({'result': "OK"})

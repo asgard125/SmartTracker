@@ -104,20 +104,11 @@ class HabitListResource(Resource):
                 dict_habit = habit.to_dict(
                     only=('id', 'name', 'type', 'booting', 'weekdays',
                           'notify_time', 'reputation', 'muted', 'done'))
-            current_user_voted = False
-            if habit.voted_users is not None:
-                already_voted = [i.split(':') for i in habit.voted_users.split(', ')]
-                for vote in already_voted:
-                    if str(user_by_api.id) in vote:
-                        dict_habit['voted'] = True
-                        dict_habit['vote_type'] = vote[1]
-                        current_user_voted = True
-                        break
-            if not current_user_voted:
-                dict_habit['voted'] = False,
-                dict_habit['vote_type'] = None
+            current_user_vote = habit.check_user_vote(user_by_api.id)
+            dict_habit['voted'] = current_user_vote['voted']
+            dict_habit['vote_type'] = current_user_vote['vote_type']
             habits_list.append(dict_habit)
-        return jsonify({'habits': [habit for habit in habits]})
+        return jsonify({'habits': [habit for habit in habits_list]})
 
     def post(self):
         parser = reqparse.RequestParser()

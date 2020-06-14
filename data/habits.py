@@ -51,3 +51,11 @@ class Habit(SqlAlchemyBase, UserMixin, SerializerMixin):
         if muted is not None:
             habit.muted = muted
         session.commit()
+
+    def check_user_vote(self, user_id):
+        if self.voted_users is not None:
+            already_voted = [i.split(':') for i in self.voted_users.split(', ')]
+            for vote in already_voted:
+                if str(user_id) in vote:
+                    return {'voted': True, 'vote_type': vote[1]}
+        return {'voted': False, 'vote_type': None}
