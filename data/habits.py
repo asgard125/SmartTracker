@@ -14,7 +14,7 @@ class Habit(SqlAlchemyBase, UserMixin, SerializerMixin):
     user_id = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"))
     name = sqlalchemy.Column(sqlalchemy.String, nullable=False)
     start_date = sqlalchemy.Column(sqlalchemy.DateTime, nullable=False, default=datetime.datetime.now())
-    edit_date = sqlalchemy.Column(sqlalchemy.DateTime, nullable=False, default=datetime.datetime.now())
+    edit_date = sqlalchemy.Column(sqlalchemy.DateTime, nullable=True)
     description = sqlalchemy.Column(sqlalchemy.Text, nullable=True)
     pluses = sqlalchemy.Column(sqlalchemy.Text, nullable=True)
     minuses = sqlalchemy.Column(sqlalchemy.Text, nullable=True)
@@ -33,6 +33,8 @@ class Habit(SqlAlchemyBase, UserMixin, SerializerMixin):
     def change_data(self, name, description, pluses, minuses, type, weekdays, notify_time, muted):
         session = db_session.create_session()
         habit = session.query(Habit).get(self.id)
+        if name or datetime or weekdays:
+            habit.edit_date = datetime.datetime.now()
         if name:
             habit.name = name
         if description:

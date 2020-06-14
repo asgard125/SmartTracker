@@ -2,9 +2,9 @@ import sys
 
 
 def password_validation(password):
-    if len(password) <= 8:
-        return {'result': 'FAIL', 'message': 'Password must be at least 8 characters long'}
-    if len(set(password)) <= 1:
+    if len(password) < 6:
+        return {'result': 'FAIL', 'message': 'Password must be at least 6 characters long'}
+    if len(set(password)) <= 2:
         return {'result': 'FAIL', 'message': 'Password is too simple'}
     return {'result': 'OK'}
 
@@ -23,6 +23,7 @@ def name_validation(name):
     if not name.isalnum():
         return {'result': 'FAIL', 'message': 'Name can only consist of letters and symbols'}
     return {'result': 'OK'}
+
 
 def email_validation(email):
     pass
