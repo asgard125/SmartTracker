@@ -47,7 +47,7 @@ class HabitResource(Resource):
         user = check_api_key(args['api_key'])
         habit = check_is_habit_exist(id)
         if habit.user_id == user.id:
-            if habit.edit_time is not None:
+            if habit.edit_date is not None:
                 delta = datetime.datetime.now() - habit.edit_date
                 if delta.days < 7 and (args['weekdays'] or args['name'] or args['description']):
                     return jsonify({'result': 'FAIL', 'message': 'You can only edit the habit once every 7 days'})
