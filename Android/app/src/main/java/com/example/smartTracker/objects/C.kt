@@ -4,7 +4,7 @@ import java.lang.StringBuilder
 
 object C {
 
-    const val SECRET_KEY = "smarttrackerbetav1.3_sd81ks1sal"
+    const val SECRET_KEY = "smarttrackerbetav1.4_sd81ks1sal"
     const val ACTION_NEW_DAY_UPDATE_UI = "com.example.smartTracker.DataUpdateReceiver"
 
     //HTTP

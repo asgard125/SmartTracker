@@ -70,5 +70,5 @@
     <string name="exit_account">Exit account</string>
     <string name="max_habits_error">You can\'t have more than 10 habits</string>
     <string name="vote_error">You\'ve already voted for this habit</string>
-    <string name="edit_habit_error">You can only edit the habit once every 7 days</string>
+    <string name="edit_habit_error">You can edit name, description, notification days of habit only the once every 7 days</string>
 </resources>

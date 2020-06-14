@@ -21,7 +21,6 @@ class HabitsService : IntentService("HabitsService") {
         val apiKey = preferences?.getString(C.API_KEY, null)
         when (intent?.extras?.getInt(C.TASK_TYPE)) {
             C.GET_ALL_HABITS_TASK -> {
-                Toast.makeText(applicationContext, "Out of Bound", Toast.LENGTH_LONG).show()
                 val habits = Database.HabitsModel.getAllHabits()
                 val responseIntent = Intent()
 
@@ -188,7 +187,7 @@ class HabitsService : IntentService("HabitsService") {
                     C.description to habit.description,
                     C.pluses to pluses,
                     C.minuses to minuses,
-                    C.habitType to habitType,
+                    C.type to habitType,
                     C.weekdays to weekdays,
                     C.notifyTime to habit.notifyTime,
                     C.muted to habit.isMuted
