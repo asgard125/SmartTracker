@@ -49,7 +49,7 @@ class HabitResource(Resource):
         if habit.user_id == user.id:
             if habit.edit_date is not None:
                 delta = datetime.datetime.now() - habit.edit_date
-                if delta.days < 7 and (args['weekdays'] or args['name'] or args['description']):
+                if delta.days < 7 and (args['weekdays'] != habit.weekdays or args['name'] != habit.name or args['description'] != habit.description):
                     return jsonify({'result': 'FAIL', 'message': 'You can only edit the habit once every 7 days'})
             habit.change_data(name=args['name'], description=args['description'], pluses=args['pluses'],
                               minuses=args['minuses'],

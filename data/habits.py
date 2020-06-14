@@ -33,7 +33,7 @@ class Habit(SqlAlchemyBase, UserMixin, SerializerMixin):
     def change_data(self, name, description, pluses, minuses, type, weekdays, notify_time, muted):
         session = db_session.create_session()
         habit = session.query(Habit).get(self.id)
-        if name or datetime or weekdays:
+        if name != habit.name or description != habit.description or weekdays != habit.weekdays:
             habit.edit_date = datetime.datetime.now()
         if name:
             habit.name = name
