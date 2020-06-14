@@ -1,5 +1,6 @@
 package com.example.smartTracker.mainScreen.rating
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -113,10 +115,37 @@ class ProfilePagerFragment : Fragment(){
                 name.text = habit.name
                 reputation.text = getString(R.string.reputation_pattern, habit.reputation)
                 if(habit.isVoted){
-                    if(habit.isLiked){
+                    if(habit.voteType == Habit.POSITIVE){
                         likeButton.setImageDrawable(resources.getDrawable(R.drawable.ic_like_green, null))
-                    }else{
+                    }else if(habit.voteType == Habit.NEGATIVE){
                         dislikeButton.setImageDrawable(resources.getDrawable(R.drawable.ic_dislike_red, null))
+                    }
+                }
+
+                likeButton.setOnClickListener{
+                    if(!habit.isVoted){
+                        likeButton.setImageDrawable(resources.getDrawable(R.drawable.ic_like_green, null))
+                        habit.isVoted = true
+                        habit.voteType = Habit.POSITIVE
+                        habit.reputation++
+                        reputation.text = getString(R.string.reputation_pattern, habit.reputation)
+                        voteForHabit(Habit.POSITIVE, habit.serverId)
+                    }
+                    else{
+                        Toast.makeText(context, getString(R.string.vote_error), Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                dislikeButton.setOnClickListener{
+                    if(!habit.isVoted){
+                        dislikeButton.setImageDrawable(resources.getDrawable(R.drawable.ic_dislike_red, null))
+                        habit.voteType = Habit.NEGATIVE
+                        habit.isVoted = true
+                        habit.reputation--
+                        reputation.text = getString(R.string.reputation_pattern, habit.reputation)
+                        voteForHabit(Habit.NEGATIVE, habit.serverId)
+                    }else{
+                        Toast.makeText(context, getString(R.string.vote_error), Toast.LENGTH_SHORT).show()
                     }
                 }
 
@@ -174,6 +203,14 @@ class ProfilePagerFragment : Fragment(){
                 time.append(" - ${habit.notifyTime}")
                 dateText.text = time.toString()
 
+            }
+
+            private fun voteForHabit(voteType : String, serverId : Long){
+                val intent = Intent(context, ProfileService::class.java)
+                intent.putExtra(C.TASK_TYPE, C.VOTE_FOR_HABIT_TASK)
+                intent.putExtra(C.VOTE_TYPE, voteType)
+                intent.putExtra(C.serverId, serverId)
+                context?.startService(intent)
             }
 
         }

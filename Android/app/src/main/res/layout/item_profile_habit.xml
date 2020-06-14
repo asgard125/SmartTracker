@@ -58,12 +58,14 @@
                     android:id = "@+id/ProfileHabitLikes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_like" />
+                    android:padding="8dp"
+                    android:src="@drawable/ic_like"/>
 
                 <ImageView
                     android:id = "@+id/ProfileHabitDislikes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:padding="8dp"
                     android:layout_marginStart="16dp"
                     android:src="@drawable/ic_dislike" />
 

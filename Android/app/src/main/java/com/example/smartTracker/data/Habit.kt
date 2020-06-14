@@ -1,6 +1,7 @@
 package com.example.smartTracker.data
 
 import android.os.Parcelable
+import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -19,4 +20,11 @@ data class Habit(var id : Long = -1,
                  var isPublic : Boolean = true,
                  var isMuted : Boolean = true,
                  var isVoted : Boolean = false,
-                 var isLiked : Boolean = true) : Parcelable
+                 var voteType : String = POSITIVE) : Parcelable{
+
+    companion object{
+        const val POSITIVE = "positive"
+        const val NEGATIVE = "negative"
+    }
+
+}

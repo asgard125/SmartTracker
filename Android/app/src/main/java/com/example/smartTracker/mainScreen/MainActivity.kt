@@ -10,6 +10,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
+import androidx.core.view.get
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.example.smartTracker.DateUpdateReceiver
@@ -71,35 +72,41 @@ class MainActivity : AppCompatActivity() {
         navigationView.setNavigationItemSelectedListener { item ->
             val selectedFragment : Fragment
             val selectedTitle : String
+            val selectedIndex : Int
             when(item.itemId){
                 R.id.MainFragmentItem ->{
                     selectedFragment = MainFragment()
                     selectedTitle = getString(R.string.main_screen)
+                    selectedIndex = 0
                 }
                 R.id.GoalsFragmentItem ->{
                     selectedFragment = GoalsFragment()
                     selectedTitle = getString(R.string.goals)
+                    selectedIndex = 1
                 }
                 R.id.HabitsFragmentItem ->{
-                    selectedFragment =
-                        HabitsFragment()
+                    selectedFragment = HabitsFragment()
                     selectedTitle = getString(R.string.habits)
+                    selectedIndex = 2
                 }
                 R.id.RatingFragmentItem ->{
-                    selectedFragment =
-                        RatingFragment()
+                    selectedFragment = RatingFragment()
                     selectedTitle = getString(R.string.rating)
+                    selectedIndex = 3
                 }
                 R.id.SettingsFragmentItem ->{
                     selectedFragment = SettingsFragment()
                     selectedTitle = getString(R.string.settings)
+                    selectedIndex = 4
                 }
                 else ->{
                     throw(Exception(""))
                 }
             }
-            supportFragmentManager.beginTransaction().replace(R.id.MainContainer, selectedFragment).commit()
-            supportActionBar?.title = selectedTitle
+            if(!navigationView.menu.getItem(selectedIndex).isChecked){
+                supportFragmentManager.beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.MainContainer, selectedFragment).commit()
+                supportActionBar?.title = selectedTitle
+            }
             drawer.closeDrawer(GravityCompat.START)
             true
         }

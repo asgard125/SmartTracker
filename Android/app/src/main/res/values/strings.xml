@@ -68,4 +68,7 @@
     <string name="no_minuses">No minuses</string>
     <string name="one_day_notification_error">You need to choose at least one day of notification</string>
     <string name="exit_account">Exit account</string>
+    <string name="max_habits_error">You can\'t have more than 10 habits</string>
+    <string name="vote_error">You\'ve already voted for this habit</string>
+    <string name="edit_habit_error">You can only edit the habit once every 7 days</string>
 </resources>

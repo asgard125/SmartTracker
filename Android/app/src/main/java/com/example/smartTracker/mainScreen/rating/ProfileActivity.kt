@@ -49,6 +49,11 @@ class ProfileActivity  : AppCompatActivity(){
 
     }
 
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
@@ -83,6 +88,7 @@ class ProfileActivity  : AppCompatActivity(){
 
         val intent = Intent(this, ProfileService::class.java)
         intent.putExtra(C.ID, user.userId)
+        intent.putExtra(C.TASK_TYPE, C.GET_ALL_HABITS_TASK)
         startService(intent)
     }
 

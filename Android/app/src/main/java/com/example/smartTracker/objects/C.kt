@@ -4,7 +4,7 @@ import java.lang.StringBuilder
 
 object C {
 
-    const val SECRET_KEY = "smarttrackerbetav1.0_oasf13dl1s"
+    const val SECRET_KEY = "smarttrackerbetav1.3_sd81ks1sal"
     const val ACTION_NEW_DAY_UPDATE_UI = "com.example.smartTracker.DataUpdateReceiver"
 
     //HTTP
@@ -20,6 +20,7 @@ object C {
     const val COMPLETE_HABIT_URL = "https://smarttracker.herokuapp.com/habit_completed/"
     const val CHECK_SECRET_KEY_URL = "https://smarttracker.herokuapp.com/check_secret_key/"
     const val GET_ALL_HABITS_URL = "https://smarttracker.herokuapp.com/api/v1/habits"
+    const val VOTE_FOR_HABIT_URL = "https://smarttracker.herokuapp.com/vote_for_habit/"
 
     const val MESSAGE = "message"
     const val RESULT = "result"
@@ -53,13 +54,13 @@ object C {
     const val SIGN_UP_STATUS = "SIGN_UP_STATUS"
     const val SIGN_IN_STATUS = "SIGN_IN_STATUS"
     const val INVALID_LOGIN_PASSWORD_ERROR = "invalid login or password"
-    const val LOGIN_EXISTS_ERROR = "user with this login already exists"
     const val INFO_TYPE = "info_type"
     const val INFO_TYPE_PRIVATE = "private"
     const val INFO_TYPE_PUBLIC= "public"
     //SignService
 
     //HabitsService
+        const val ACTION_HABIT_UNDO = "ACTION_HABIT_UNDO"
         const val ACTION_HABITS_SERVICE = "com.example.smartTracker.mainScreen.habits.HabitsService"
         const val GET_ALL_HABITS_TASK = 1
         const val ADD_DEFAULT_HABIT_TASK = 2
@@ -103,5 +104,10 @@ object C {
     //Goals database
 
     const val ACTION_PROFILE_SERVICE = "com.example.smartTracker.mainScreen.rating.ProfileService"
+    const val VOTE_FOR_HABIT_TASK = 6
+    const val VOTE_TYPE = "vote_type"
+    const val VOTED = "voted"
+    const val OLD_HABIT = "OLD_HABIT"
+    const val UPDATED_POSITION = "UPDATED_POSITION"
 
 }

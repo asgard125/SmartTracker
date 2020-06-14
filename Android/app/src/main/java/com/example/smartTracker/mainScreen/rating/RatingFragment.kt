@@ -104,17 +104,20 @@ class RatingFragment : Fragment() {
                 wordToSpan.setSpan(ForegroundColorSpan(Color.GRAY), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 holder.nameAndIdText.text = wordToSpan
             }else{
-                holder.nameAndIdText.text = user.name
+                val wordToSpan = SpannableString(user.name)
+                wordToSpan.setSpan(ForegroundColorSpan(resources.getColor(R.color.red, null)), 0, user.name.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                holder.nameAndIdText.text = wordToSpan
             }
 
             holder.ratingCountText.text = user.rating.toString()
 
             holder.itemView.setOnClickListener{
-                //if(user.name != getString(R.string.you)){
-                val intent = Intent(context, ProfileActivity::class.java)
-                intent.putExtra(C.USER, user)
-                startActivity(intent)
-                //}
+                if(user.name != getString(R.string.you)){
+                    val intent = Intent(context, ProfileActivity::class.java)
+                    intent.putExtra(C.USER, user)
+                    startActivity(intent)
+                    activity?.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
+                }
             }
 
         }

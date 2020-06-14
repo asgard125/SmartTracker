@@ -4,6 +4,7 @@ import android.app.IntentService
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import com.example.smartTracker.data.Habit
 import com.example.smartTracker.objects.C
 import com.example.smartTracker.objects.Database
@@ -20,8 +21,49 @@ class HabitsService : IntentService("HabitsService") {
         val apiKey = preferences?.getString(C.API_KEY, null)
         when (intent?.extras?.getInt(C.TASK_TYPE)) {
             C.GET_ALL_HABITS_TASK -> {
+                Toast.makeText(applicationContext, "Out of Bound", Toast.LENGTH_LONG).show()
                 val habits = Database.HabitsModel.getAllHabits()
                 val responseIntent = Intent()
+
+                val userId = preferences?.getLong(C.ID, -1)
+
+                val client = OkHttpClient()
+
+                val url = C.GET_ALL_HABITS_URL+"?${C.habitType}=all&${C.INFO_TYPE}=short&${C.API_KEY}=${apiKey}&${C.USER_ID}=$userId"
+
+                val request = Request.Builder()
+                    .url(url)
+                    .get()
+                    .build()
+
+                val response = client.newCall(request).execute()
+                val statusCode = response.code
+                if(statusCode == C.OK_CODE){
+                    val responseJson = JSONObject(response.body?.string())
+                    val habitsJsonArray = responseJson.getJSONArray(C.habits)
+                    var habitJson : JSONObject
+                    val habitsReputation = ArrayList<Habit>()
+                    var habit : Habit
+                    for(i in 0 until habitsJsonArray.length()){
+                        habit = Habit()
+                        habitJson = habitsJsonArray.get(i) as JSONObject
+                        habit.serverId = habitJson.getLong(C.ID)
+                        habit.reputation = habitJson.getInt(C.reputation)
+                        habitsReputation.add(habit)
+                    }
+                    try{
+                        habits.sortBy { it.serverId }
+                        habitsReputation.sortBy { it.serverId }
+                        for(i in 0 until habits.size){
+                            habits[i].reputation = habitsReputation[i].reputation
+                        }
+                    }catch(e : ArrayIndexOutOfBoundsException){
+                        Toast.makeText(applicationContext, "Out of Bound", Toast.LENGTH_LONG).show()
+                    }
+                }else{
+                    Log.d("SmartTracker", "ProfileService, status code is $statusCode, message is ${response.message}")
+                }
+
                 responseIntent.action = C.ACTION_HABITS_SERVICE
                 responseIntent.addCategory(Intent.CATEGORY_DEFAULT)
                 responseIntent.putParcelableArrayListExtra(C.habits, habits)
@@ -120,6 +162,8 @@ class HabitsService : IntentService("HabitsService") {
             }
             C.UPDATE_HABIT_TASK -> {
                 val habit = intent.getParcelableExtra<Habit>(C.habit)!!
+                val oldHabit = intent.getParcelableExtra<Habit>(C.OLD_HABIT)!!
+                val updatedPosition = intent.getIntExtra(C.UPDATED_POSITION, -1)
                 val serverId = if (habit.serverId != (-1).toLong()) {
                     habit.serverId
                 } else {
@@ -169,8 +213,14 @@ class HabitsService : IntentService("HabitsService") {
                 if (statusCode == C.OK_CODE) {
                     val responseJson = JSONObject(response.body?.string())
 
-                    if (responseJson.get(C.RESULT) != C.RESULT_OK) {
-                        Log.d("SmartTracker", responseJson.getString(C.MESSAGE))
+                    if (responseJson.get(C.RESULT) == C.RESULT_FAIL) {
+                        Database.HabitsModel.updateHabit(oldHabit)
+                        val responseIntent = Intent()
+                        responseIntent.action = C.ACTION_HABIT_UNDO
+                        responseIntent.addCategory(Intent.CATEGORY_DEFAULT)
+                        responseIntent.putExtra(C.OLD_HABIT, oldHabit)
+                        responseIntent.putExtra(C.UPDATED_POSITION, updatedPosition)
+                        sendBroadcast(responseIntent)
                     }
 
                 } else {

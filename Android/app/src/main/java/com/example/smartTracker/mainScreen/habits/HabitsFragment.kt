@@ -24,6 +24,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.*
 import kotlin.collections.ArrayList
 
+const val MAX_HABITS = 10
+
 class HabitsFragment : Fragment(){
 
     private lateinit var root : View
@@ -41,7 +43,7 @@ class HabitsFragment : Fragment(){
         override fun onReceive(context: Context?, intent: Intent?) {
             when(intent?.action){
                 C.ACTION_HABITS_SERVICE ->{
-                    var habits = intent?.extras?.getParcelableArrayList<Habit>(C.habits)
+                    var habits = intent.extras?.getParcelableArrayList<Habit>(C.habits)
                     if(habits == null){
                         habits = ArrayList()
                     }
@@ -58,6 +60,13 @@ class HabitsFragment : Fragment(){
                     val requestHabitsIntent = Intent(context, HabitsService::class.java)
                     activity?.startService(requestHabitsIntent.putExtra(C.TASK_TYPE, C.GET_ALL_HABITS_TASK))
                 }
+                C.ACTION_HABIT_UNDO ->{
+                    Toast.makeText(context, getString(R.string.edit_habit_error), Toast.LENGTH_LONG).show()
+                    val oldHabit = intent.getParcelableExtra<Habit>(C.OLD_HABIT)!!
+                    val updatedPosition = intent.getIntExtra(C.UPDATED_POSITION, -1)
+                    adapter.habits[updatedPosition] = oldHabit
+                    adapter.notifyItemChanged(updatedPosition)
+                }
             }
         }
 
@@ -68,6 +77,7 @@ class HabitsFragment : Fragment(){
 
         filter = IntentFilter(C.ACTION_HABITS_SERVICE)
         filter.addAction(C.ACTION_NEW_DAY_UPDATE_UI)
+        filter.addAction(C.ACTION_HABIT_UNDO)
         filter.addCategory(Intent.CATEGORY_DEFAULT)
     }
 
@@ -87,10 +97,14 @@ class HabitsFragment : Fragment(){
 
         fab.isEnabled = false
         fab.setOnClickListener{
-            val newHabit = Database.HabitsModel.addDefaultHabitAndReturn()
-            adapter.habits.add(newHabit)
-            adapter.notifyItemInserted(adapter.habits.size)
-            activity?.startService(addNewHabitIntent.putExtra(C.TASK_TYPE, C.ADD_DEFAULT_HABIT_TASK).putExtra(C.habit, newHabit))
+            if(adapter.habits.size <= MAX_HABITS){
+                val newHabit = Database.HabitsModel.addDefaultHabitAndReturn()
+                adapter.habits.add(newHabit)
+                adapter.notifyItemInserted(adapter.habits.size)
+                activity?.startService(addNewHabitIntent.putExtra(C.TASK_TYPE, C.ADD_DEFAULT_HABIT_TASK).putExtra(C.habit, newHabit))
+            }else{
+                Toast.makeText(context, getString(R.string.max_habits_error), Toast.LENGTH_SHORT).show()
+            }
         }
 
         val requestHabitsIntent = Intent(context, HabitsService::class.java)
@@ -180,6 +194,7 @@ class HabitsFragment : Fragment(){
                 val bundle = bundleOf("Habit" to habit, "Position" to holder.adapterPosition)
                 intent.putExtras(bundle)
                 startActivityForResult(intent, 1)
+                activity?.overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left)
             }
 
         }

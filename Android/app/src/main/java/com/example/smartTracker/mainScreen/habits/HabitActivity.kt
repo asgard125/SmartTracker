@@ -50,13 +50,25 @@ class HabitActivity : AppCompatActivity() {
     private val receiver = object : BroadcastReceiver(){
 
         override fun onReceive(context: Context?, intent: Intent?) {
-            needToUpdateList = true
+            if(intent?.action == C.ACTION_NEW_DAY_UPDATE_UI){
+                needToUpdateList = true
+            }else if(intent?.action == C.ACTION_HABIT_UNDO){
+                Toast.makeText(context, getString(R.string.edit_habit_error), Toast.LENGTH_LONG).show()
+                val oldHabit = intent.getParcelableExtra<Habit>(C.OLD_HABIT)!!
+                habit = oldHabit.copy()
+                updateUI(oldHabit)
+            }
         }
 
     }
 
     private var isMuted = false
     private lateinit var notificationManager: HabitsNotificationManager
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right)
+    }
 
     override fun onBackPressed() {
         val newHabit = getNewHabit()
@@ -91,6 +103,7 @@ class HabitActivity : AppCompatActivity() {
         setContentView(R.layout.activity_habit)
 
         filter = IntentFilter(C.ACTION_NEW_DAY_UPDATE_UI)
+        filter.addAction(C.ACTION_HABIT_UNDO)
         filter.addCategory(Intent.CATEGORY_DEFAULT)
 
         notificationManager = HabitsNotificationManager(baseContext)
@@ -125,6 +138,11 @@ class HabitActivity : AppCompatActivity() {
             onBackPressed()
         }
 
+        updateUI(habit)
+
+    }
+
+    private fun updateUI(habit : Habit){
         nameText.setText(habit.name)
         descriptionText.setText(habit.description)
 
@@ -165,7 +183,6 @@ class HabitActivity : AppCompatActivity() {
         } else {
             typeGroup.check(R.id.HabitPrivateButton)
         }
-
     }
 
     override fun onStart() {
@@ -247,7 +264,7 @@ class HabitActivity : AppCompatActivity() {
         intent.putExtras(bundleOf("Habit" to newHabit, "Position" to updatedPosition, "needToUpdate" to needToUpdateList))
         setResult(Activity.RESULT_OK, intent)
         val intent = Intent(baseContext, HabitsService::class.java)
-        startService(intent.putExtra(C.TASK_TYPE, C.UPDATE_HABIT_TASK).putExtra(C.habit, newHabit))
+        startService(intent.putExtra(C.TASK_TYPE, C.UPDATE_HABIT_TASK).putExtra(C.habit, newHabit).putExtra(C.OLD_HABIT, habit).putExtra(C.UPDATED_POSITION, updatedPosition))
     }
 
     private fun getNewHabit(): Habit {

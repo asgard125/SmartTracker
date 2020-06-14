@@ -53,6 +53,7 @@ class SignService : IntentService("SignService"){
                         }
                     }
                 }else{
+                    Log.d("SmartTracker", "SignUp, connection error, code is ${response.code}, message is ${response.message}")
                     responseIntent = getResponseIntent(C.SIGN_UP_STATUS, C.STATUS_FAIL, getString(R.string.connection_error))
                     sendBroadcast(responseIntent)
                 }
@@ -72,15 +73,11 @@ class SignService : IntentService("SignService"){
                         responseIntent.putExtra(C.USER, user)
                         sendBroadcast(responseIntent)
                     }else{
-                        when(responseJson.get(C.MESSAGE)){
-                            C.LOGIN_EXISTS_ERROR-> {
-                                responseIntent = getResponseIntent(C.SIGN_UP_STATUS, C.STATUS_FAIL, getString(R.string.login_exists_error))
-                                sendBroadcast(responseIntent)
-                            }
-                        }
+                        responseIntent = getResponseIntent(C.SIGN_UP_STATUS, C.STATUS_FAIL, responseJson.getString(C.MESSAGE))
+                        sendBroadcast(responseIntent)
                     }
-
                 }else{
+                    Log.d("SmartTracker", "SignIn, connection error, code is ${response.code}, message is ${response.message}")
                     responseIntent = getResponseIntent(C.SIGN_UP_STATUS, C.STATUS_FAIL, getString(R.string.connection_error))
                     sendBroadcast(responseIntent)
                 }
