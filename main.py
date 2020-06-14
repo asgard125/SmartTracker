@@ -98,7 +98,7 @@ def vote_for_habit(habit_id):
     if current_user_vote['voted'] is True:
         return jsonify({'result': 'FAIL', 'message': 'You have already voted on this habit'})
     if habit.voted_users is None:
-        habit.voted_users = str(user.id)
+        habit.voted_users = str(user.id) + ':' + args['vote_type']
     else:
         habit.voted_users += f', {user.id}:{args["vote_type"]}'
     if args['vote_type'] == 'positive':

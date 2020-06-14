@@ -30,7 +30,7 @@ class HabitResource(Resource):
             abort(403, message='Invalid api key')
         return jsonify({'habit': habit.to_dict(
             only=('id', 'start_date', 'description', 'pluses', 'minuses', 'type', 'booting', 'weekdays',
-                  'notify_time', 'votes', 'reputation', 'muted'))})
+                  'notify_time', 'votes', 'reputation', 'muted', 'done'))})
 
     def put(self, id):
         parser = reqparse.RequestParser()
@@ -47,6 +47,9 @@ class HabitResource(Resource):
         user = check_api_key(args['api_key'])
         habit = check_is_habit_exist(id)
         if habit.user_id == user.id:
+            delta = datetime.datetime.now() - habit.edit_date
+            if delta.days < 7 and (args['weekdays'] or args['name'] or args['description']):
+                return jsonify({'result': 'FAIL', 'message': 'You can only edit the habit once every 7 days'})
             habit.change_data(name=args['name'], description=args['description'], pluses=args['pluses'],
                               minuses=args['minuses'],
                               type=args['type'], weekdays=args['weekdays'], notify_time=args['notify_time'],
