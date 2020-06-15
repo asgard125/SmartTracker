@@ -2,6 +2,7 @@ package com.example.smartTracker.objects
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.DatabaseUtils
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import com.example.smartTracker.R
@@ -185,6 +186,10 @@ object Database {
                 }while (cursor.moveToNext())
             }
             cursor.close()
+        }
+
+        fun getCountOfHabits() : Long{
+            return DatabaseUtils.queryNumEntries(db, C.habits)
         }
 
     }

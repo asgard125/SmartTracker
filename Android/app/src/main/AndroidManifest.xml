@@ -3,6 +3,7 @@
     package="com.example.smartTracker">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:allowBackup="true"
@@ -26,8 +27,7 @@
             android:parentActivityName="com.example.smartTracker.mainScreen.MainActivity"/>
 
         <service android:name=".signScreen.SignService"/>
-        <service android:name="com.example.smartTracker.mainScreen.habits.HabitsService"
-            android:foregroundServiceType="dataSync"/>
+        <service android:name=".mainScreen.habits.HabitsService"/>
         <service android:name=".mainScreen.rating.RatingService"/>
         <service android:name=".mainScreen.rating.ProfileService"/>
 

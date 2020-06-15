@@ -10,17 +10,17 @@ object C {
     //HTTP
     const val OK_CODE = 200
     const val OUT_SITE = "https://vk.com/greamteamdev"
-    const val SIGN_UP_URL = "https://smarttracker.herokuapp.com/register"
-    const val SIGN_IN_URL = "https://smarttracker.herokuapp.com/login"
-    const val GET_BASIC_INFO_URL = "https://smarttracker.herokuapp.com/api/v1/user/0"
-    const val ADD_NEW_HABIT_URL = "https://smarttracker.herokuapp.com/api/v1/habits"
-    const val DELETE_HABIT_URL = "https://smarttracker.herokuapp.com/api/v1/habit/"
-    const val UPDATE_HABIT_URL = "https://smarttracker.herokuapp.com/api/v1/habit/"
-    const val RATING_URL = "https://smarttracker.herokuapp.com/api/v1/users"
-    const val COMPLETE_HABIT_URL = "https://smarttracker.herokuapp.com/habit_completed/"
-    const val CHECK_SECRET_KEY_URL = "https://smarttracker.herokuapp.com/check_secret_key/"
-    const val GET_ALL_HABITS_URL = "https://smarttracker.herokuapp.com/api/v1/habits"
-    const val VOTE_FOR_HABIT_URL = "https://smarttracker.herokuapp.com/vote_for_habit/"
+    const val SIGN_UP_URL = "https://rikko125r.pythonanywhere.com/register"
+    const val SIGN_IN_URL = "https://rikko125r.pythonanywhere.com/login"
+    const val GET_BASIC_INFO_URL = "https://rikko125r.pythonanywhere.com/api/v1/user/0"
+    const val ADD_NEW_HABIT_URL = "https://rikko125r.pythonanywhere.com/api/v1/habits"
+    const val DELETE_HABIT_URL = "https://rikko125r.pythonanywhere.com/api/v1/habit/"
+    const val UPDATE_HABIT_URL = "https://rikko125r.pythonanywhere.com/api/v1/habit/"
+    const val RATING_URL = "https://rikko125r.pythonanywhere.com/api/v1/users"
+    const val COMPLETE_HABIT_URL = "https://rikko125r.pythonanywhere.com/habit_completed/"
+    const val CHECK_SECRET_KEY_URL = "https://rikko125r.pythonanywhere.com/check_secret_key/"
+    const val GET_ALL_HABITS_URL = "https://rikko125r.pythonanywhere.com/api/v1/habits"
+    const val VOTE_FOR_HABIT_URL = "https://rikko125r.pythonanywhere.com/vote_for_habit/"
 
     const val MESSAGE = "message"
     const val RESULT = "result"
@@ -109,5 +109,7 @@ object C {
     const val VOTED = "voted"
     const val OLD_HABIT = "OLD_HABIT"
     const val UPDATED_POSITION = "UPDATED_POSITION"
+
+    const val MAX_HABITS = 10
 
 }

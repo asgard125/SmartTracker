@@ -1,9 +1,14 @@
 package com.example.smartTracker.mainScreen.habits
 
 import android.app.IntentService
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.util.Log
+import androidx.core.app.NotificationCompat
+import com.example.smartTracker.R
 import com.example.smartTracker.data.Habit
 import com.example.smartTracker.objects.C
 import com.example.smartTracker.objects.Database
@@ -14,6 +19,28 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 
 class HabitsService : IntentService("HabitsService") {
+
+    override fun onCreate() {
+        super.onCreate()
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val builder = NotificationCompat.Builder(applicationContext)
+            .setContentTitle(getString(R.string.app_name))
+            .setContentTitle(getString(R.string.foreground_notification))
+            .setSmallIcon(R.drawable.ic_app_icon)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            val channelName: CharSequence = "smart_tracker"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val notificationChannel = NotificationChannel("123", channelName, importance)
+            notificationManager.createNotificationChannel(notificationChannel)
+            builder.setChannelId(notificationChannel.id)
+
+        }
+
+        val notification = builder.build()
+        startForeground(1337, notification)
+    }
 
     override fun onHandleIntent(intent: Intent?) {
         val preferences = applicationContext.getSharedPreferences(C.MAIN_PREFERENCES, Context.MODE_PRIVATE)

@@ -19,7 +19,9 @@ import androidx.transition.TransitionManager
 import com.example.smartTracker.R
 import com.example.smartTracker.data.Goal
 import com.example.smartTracker.data.Habit
+import com.example.smartTracker.mainScreen.habits.HabitsService
 import com.example.smartTracker.objects.C
+import com.example.smartTracker.objects.Database
 import java.lang.StringBuilder
 
 class ProfilePagerFragment : Fragment(){
@@ -98,6 +100,7 @@ class ProfilePagerFragment : Fragment(){
             val plusesText : TextView = itemView.findViewById(R.id.ProfileHabitPluses)
             val minusesText : TextView = itemView.findViewById(R.id.ProfileHabitMinuses)
             val dateText : TextView = itemView.findViewById(R.id.ProfileHabitDate)
+            val copyButton : ImageView = itemView.findViewById(R.id.ProfileHabitCopyButton)
 
             private var isExpanded = false
 
@@ -202,6 +205,21 @@ class ProfilePagerFragment : Fragment(){
                 }
                 time.append(" - ${habit.notifyTime}")
                 dateText.text = time.toString()
+
+                copyButton.setOnClickListener{
+                    if(Database.HabitsModel.getCountOfHabits() < C.MAX_HABITS){
+                        val copiedHabit = habit.copy(id = -1,
+                                                            serverId = -1,
+                                                            reputation = 0,
+                                                            isVoted = false,
+                                                            voteType = Habit.POSITIVE)
+                        copiedHabit.id = Database.HabitsModel.addHabitAndReturnId(copiedHabit)
+                        val addIntent = Intent(context, HabitsService::class.java).putExtra(C.habit, copiedHabit).putExtra(C.TASK_TYPE, C.ADD_HABIT_TASK)
+                        context?.startService(addIntent)
+                    }else{
+                        Toast.makeText(context, getString(R.string.max_habits_error), Toast.LENGTH_LONG).show()
+                    }
+                }
 
             }
 

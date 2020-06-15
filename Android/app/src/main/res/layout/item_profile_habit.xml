@@ -148,14 +148,29 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/ProfileHabitDate"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginTop="8dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                tools:text="Sa, Su - 12:00" />
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:id="@+id/ProfileHabitDate"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                    tools:text="Mo, Tu, We, Th, Fr, Sa, Su - 12:00" />
+
+                <ImageView
+                    android:id = "@+id/ProfileHabitCopyButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:src = "@drawable/ic_copy"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 

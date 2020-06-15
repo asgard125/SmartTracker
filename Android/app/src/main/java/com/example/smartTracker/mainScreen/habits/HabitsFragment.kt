@@ -24,8 +24,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.*
 import kotlin.collections.ArrayList
 
-const val MAX_HABITS = 10
-
 class HabitsFragment : Fragment(){
 
     private lateinit var root : View
@@ -97,7 +95,7 @@ class HabitsFragment : Fragment(){
 
         fab.isEnabled = false
         fab.setOnClickListener{
-            if(adapter.habits.size <= MAX_HABITS){
+            if(adapter.habits.size < C.MAX_HABITS){
                 startActivityForResult(Intent(context, AddHabitActivity::class.java), 2)
             }else{
                 Toast.makeText(context, getString(R.string.max_habits_error), Toast.LENGTH_SHORT).show()
