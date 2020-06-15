@@ -73,6 +73,7 @@ class HabitResource(Resource):
         user.change_data(habit_limit=user.habit_limit + 1)
         session.delete(habit)
         session.commit()
+        session.close()
         return jsonify({'result': 'OK'})
 
 
@@ -116,6 +117,7 @@ class HabitListResource(Resource):
             dict_habit['voted'] = current_user_vote['voted']
             dict_habit['vote_type'] = current_user_vote['vote_type']
             habits_list.append(dict_habit)
+        session.close()
         return jsonify({'habits': [habit for habit in habits_list]})
 
     def post(self):
@@ -153,4 +155,5 @@ class HabitListResource(Resource):
         session.merge(user)
         session.commit()
         habit_id_return = session.query(Habit).filter(Habit.user_id == user.id).all()[-1].id
+        session.close()
         return jsonify({'result': 'OK', 'message': {'habit_id': f"{habit_id_return}"}})

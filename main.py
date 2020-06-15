@@ -63,6 +63,7 @@ def register():
     )
     session.add(user)
     session.commit()
+    session.close()
     return jsonify({'result': 'OK'})
 
 
@@ -108,6 +109,7 @@ def vote_for_habit(habit_id):
     habit.votes += 1
     # user.change_data(vote_limit = user.vote_limit - 1)
     session.commit()
+    session.close()
     return jsonify({'result': "OK"})
 
 
@@ -131,6 +133,7 @@ def habit_completed(habit_id):
     if habit.booting and not habit.done:
         user.change_data(rating=user.rating + habit_rating(len(habit.weekdays.split(', ')), habit.votes, habit.reputation))
         habit.change_data(done=True)
+    session.close()
     return jsonify({'result': 'OK'})
 
 
