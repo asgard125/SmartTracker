@@ -58,7 +58,6 @@ class Habit(SqlAlchemyBase, UserMixin, SerializerMixin):
             if done is True:
                 habit.done_time = datetime.datetime.now()
         session.commit()
-        session.close()
 
     def check_user_vote(self, user_id):
         if self.voted_users is not None:

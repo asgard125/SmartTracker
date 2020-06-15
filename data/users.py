@@ -47,7 +47,6 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
         self.api_key = None
         user.api_key = self.api_key
         session.commit()
-        session.close()
 
     def change_data(self, habit_limit=None, rating=None, name=None, password=None, login=None, vote_limit=None):
         session = db_session.create_session()
@@ -65,7 +64,6 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
         if vote_limit is not None:
             user.vote_limit = vote_limit
         session.commit()
-        session.close()
 
     @staticmethod
     def get_by_api(api_key):
