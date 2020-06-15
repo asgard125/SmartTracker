@@ -94,27 +94,7 @@ object Database {
             return habits
         }
 
-        fun addDefaultHabitAndReturn() : Habit{
-            val content = ContentValues()
-            val habit = Habit(name = context.getString(R.string.new_habit))
-            content.put(C.name, habit.name)
-            content.put(C.description, habit.description)
-            content.put(C.pluses, "")
-            content.put(C.minuses, "")
-            content.put(C.weekdays, "0, 2, 4")
-            content.put(C.notifyTime, habit.notifyTime)
-            content.put(C.votes, 0)
-            content.put(C.reputation, 0)
-            content.put(C.booting, 1)
-            content.put(C.habitType, "public")
-            content.put(C.isDone, 0)
-            content.put(C.muted, 1)
-            val id = db.insert(C.habits, null, content)
-            habit.id = id
-            return habit
-        }
-
-        fun addHabit(habit : Habit)  {
+        fun addHabitAndReturnId(habit : Habit) : Long {
             val content = ContentValues()
             content.put(C.serverId, habit.serverId)
             content.put(C.name, habit.name)
@@ -130,10 +110,11 @@ object Database {
             content.put(C.votes, habit.votes)
             content.put(C.reputation, habit.reputation)
             content.put(C.booting, if(habit.isBooting) 1 else 0)
-            content.put(C.habitType, if(habit.isBooting) "public" else "private")
+            content.put(C.habitType, if(habit.isPublic) "public" else "private")
             content.put(C.isDone, if(habit.isDone) 1 else 0)
             content.put(C.muted, if(habit.isMuted  ) 1 else 0)
-            db.insert(C.habits, null, content)
+            val id = db.insert(C.habits, null, content)
+            return id
         }
 
         fun updateHabit(habit : Habit){

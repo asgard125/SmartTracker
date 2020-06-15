@@ -256,7 +256,7 @@ class SignService : IntentService("SignService"){
 
     private fun saveUserDataToDatabase(habits : ArrayList<Habit>){
         for(habit in habits){
-            Database.HabitsModel.addHabit(habit)
+            Database.HabitsModel.addHabitAndReturnId(habit)
         }
     }
 

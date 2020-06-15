@@ -4,7 +4,6 @@ import android.app.IntentService
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import android.widget.Toast
 import com.example.smartTracker.data.Habit
 import com.example.smartTracker.objects.C
 import com.example.smartTracker.objects.Database
@@ -50,14 +49,12 @@ class HabitsService : IntentService("HabitsService") {
                         habit.reputation = habitJson.getInt(C.reputation)
                         habitsReputation.add(habit)
                     }
-                    try{
-                        habits.sortBy { it.serverId }
-                        habitsReputation.sortBy { it.serverId }
-                        for(i in 0 until habits.size){
-                            habits[i].reputation = habitsReputation[i].reputation
-                        }
-                    }catch(e : ArrayIndexOutOfBoundsException){
-                        Toast.makeText(applicationContext, "Out of Bound", Toast.LENGTH_LONG).show()
+                    Log.d("SmartTracker", "getAllHabits, sorting all habits by serverId")
+                    habits.sortBy{ it.serverId }
+                    habitsReputation.sortBy{ it.serverId }
+                    for(i in 0 until habitsReputation.size){
+                        habits[i].serverId = habitsReputation[i].serverId
+                        habits[i].reputation = habitsReputation[i].reputation
                     }
                 }else{
                     Log.d("SmartTracker", "ProfileService, status code is $statusCode, message is ${response.message}")
@@ -68,7 +65,7 @@ class HabitsService : IntentService("HabitsService") {
                 responseIntent.putParcelableArrayListExtra(C.habits, habits)
                 sendBroadcast(responseIntent)
             }
-            C.ADD_DEFAULT_HABIT_TASK -> {
+            C.ADD_HABIT_TASK -> {
                 val habit = intent.getParcelableExtra<Habit>(C.habit)!!
 
                 val pluses = Database.listToString(habit.pluses)
@@ -113,7 +110,7 @@ class HabitsService : IntentService("HabitsService") {
                     if (responseJson.get(C.RESULT) == C.RESULT_OK) {
                         val serverId = responseJson.getJSONObject(C.MESSAGE).getLong(C.habitId)
 
-                        Log.d("SmartTracker", "HabitsService : addDefaultHabit, server id is $serverId")
+                        Log.d("SmartTracker", "HabitsService : addHabit, server id is $serverId")
 
                         Database.HabitsModel.setServerId(habit.id, serverId)
                     } else {

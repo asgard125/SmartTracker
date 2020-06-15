@@ -116,15 +116,15 @@ class ProfilePagerFragment : Fragment(){
                 reputation.text = getString(R.string.reputation_pattern, habit.reputation)
                 if(habit.isVoted){
                     if(habit.voteType == Habit.POSITIVE){
-                        likeButton.setImageDrawable(resources.getDrawable(R.drawable.ic_like_green, null))
+                        likeButton.setImageDrawable(resources.getDrawable(R.drawable.ic_like_activated, null))
                     }else if(habit.voteType == Habit.NEGATIVE){
-                        dislikeButton.setImageDrawable(resources.getDrawable(R.drawable.ic_dislike_red, null))
+                        dislikeButton.setImageDrawable(resources.getDrawable(R.drawable.ic_dislike_activated, null))
                     }
                 }
 
                 likeButton.setOnClickListener{
                     if(!habit.isVoted){
-                        likeButton.setImageDrawable(resources.getDrawable(R.drawable.ic_like_green, null))
+                        likeButton.setImageDrawable(resources.getDrawable(R.drawable.ic_like_activated, null))
                         habit.isVoted = true
                         habit.voteType = Habit.POSITIVE
                         habit.reputation++
@@ -138,7 +138,7 @@ class ProfilePagerFragment : Fragment(){
 
                 dislikeButton.setOnClickListener{
                     if(!habit.isVoted){
-                        dislikeButton.setImageDrawable(resources.getDrawable(R.drawable.ic_dislike_red, null))
+                        dislikeButton.setImageDrawable(resources.getDrawable(R.drawable.ic_dislike_activated, null))
                         habit.voteType = Habit.NEGATIVE
                         habit.isVoted = true
                         habit.reputation--

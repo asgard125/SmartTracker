@@ -105,7 +105,7 @@ class RatingFragment : Fragment() {
                 holder.nameAndIdText.text = wordToSpan
             }else{
                 val wordToSpan = SpannableString(user.name)
-                wordToSpan.setSpan(ForegroundColorSpan(resources.getColor(R.color.red, null)), 0, user.name.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                wordToSpan.setSpan(ForegroundColorSpan(resources.getColor(R.color.colorPrimaryDark, null)), 0, user.name.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 holder.nameAndIdText.text = wordToSpan
             }
 

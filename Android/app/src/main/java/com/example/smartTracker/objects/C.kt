@@ -63,7 +63,7 @@ object C {
         const val ACTION_HABIT_UNDO = "ACTION_HABIT_UNDO"
         const val ACTION_HABITS_SERVICE = "com.example.smartTracker.mainScreen.habits.HabitsService"
         const val GET_ALL_HABITS_TASK = 1
-        const val ADD_DEFAULT_HABIT_TASK = 2
+        const val ADD_HABIT_TASK = 2
         const val DELETE_HABIT_TASK = 3
         const val UPDATE_HABIT_TASK = 4
         const val COMPLETE_HABIT_TASK = 5

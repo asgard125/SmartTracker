@@ -98,10 +98,7 @@ class HabitsFragment : Fragment(){
         fab.isEnabled = false
         fab.setOnClickListener{
             if(adapter.habits.size <= MAX_HABITS){
-                val newHabit = Database.HabitsModel.addDefaultHabitAndReturn()
-                adapter.habits.add(newHabit)
-                adapter.notifyItemInserted(adapter.habits.size)
-                activity?.startService(addNewHabitIntent.putExtra(C.TASK_TYPE, C.ADD_DEFAULT_HABIT_TASK).putExtra(C.habit, newHabit))
+                startActivityForResult(Intent(context, AddHabitActivity::class.java), 2)
             }else{
                 Toast.makeText(context, getString(R.string.max_habits_error), Toast.LENGTH_SHORT).show()
             }
@@ -178,6 +175,7 @@ class HabitsFragment : Fragment(){
                 AlertDialog.Builder(context)
                     .setTitle(getString(R.string.delete_habit_question))
                     .setPositiveButton(getString(R.string.delete)) { dialog, which ->
+                        notificationManager.deleteAlarms(habits[holder.adapterPosition])
                         habits.removeAt(holder.adapterPosition)
                         notifyItemRemoved(holder.adapterPosition)
                         val intent = Intent(context, HabitsService::class.java)
@@ -221,6 +219,17 @@ class HabitsFragment : Fragment(){
                 val habit = data.getParcelableExtra<Habit>("Habit")
                 adapter.habits[updatedPosition] = habit
                 adapter.notifyItemChanged(updatedPosition)
+            }
+            if(needToUpdate){
+                val requestHabitsIntent = Intent(context, HabitsService::class.java)
+                activity?.startService(requestHabitsIntent.putExtra(C.TASK_TYPE, C.GET_ALL_HABITS_TASK))
+            }
+        }else if(requestCode == 2 && data != null && resultCode == Activity.RESULT_OK){
+            val needToUpdate = data.getBooleanExtra("needToUpdate", false)
+            val newHabit = data.getParcelableExtra<Habit>(C.habit)
+            if(newHabit != null && !needToUpdate) {
+                adapter.habits.add(newHabit)
+                adapter.notifyItemInserted(adapter.habits.size)
             }
             if(needToUpdate){
                 val requestHabitsIntent = Intent(context, HabitsService::class.java)
