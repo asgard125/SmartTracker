@@ -28,7 +28,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     habit_limit = sqlalchemy.Column(sqlalchemy.Integer, default=10)
     vote_limit = sqlalchemy.Column(sqlalchemy.Integer, default=20)
 
-    habits = orm.relation('Habit', back_populates='user', lazy='subquery')
+    habits = orm.relation('Habit', back_populates='user', lazy='joined')
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
