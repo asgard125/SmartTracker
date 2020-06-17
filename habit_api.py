@@ -83,9 +83,12 @@ class HabitListResource(Resource):
         parser.add_argument("info_type", required=True, choices=('short', 'detail'))
         parser.add_argument("api_key", required=True)
         parser.add_argument("user_id", required=False, type=int)
+        parser.add_argument('sorted_by', required=False, choices=('popularity', 'novelty'))
         args = parser.parse_args()
         session = db_session.create_session()
         user_by_api = check_api_key(args['api_key'])
+        if args['user_id'] == 0:
+            args['user_id'] = user_by_api.id
         if args['habit_type'] == 'private':
             if args['user_id'] != user_by_api.id:
                 abort(403, message='Invalid api key')
@@ -96,8 +99,15 @@ class HabitListResource(Resource):
                 abort(403, message='Invalid api key')
             habits = session.query(Habit).filter(Habit.user_id == args['user_id']).all()
         else:
-            habits = session.query(Habit).filter(Habit.user_id == args['user_id'],
+            if args['user_id'] is None:
+                habits = session.query(Habit).filter(Habit.type == args['habit_type']).all()
+            else:
+                habits = session.query(Habit).filter(Habit.user_id == args['user_id'],
                                                  Habit.type == args['habit_type']).all()
+        if args['sorted_by'] == 'popularity':
+            habits = sorted(habits, key=lambda x: x.votes + x.reputation, reverse=True)
+        elif args['sorted_by'] == 'novelty':
+            habits = sorted(habits, key=lambda x: x.start_date, reverse=True)
         habits_list = []
         for habit in habits:
             if habit.done:
