@@ -84,9 +84,15 @@ class HabitListResource(Resource):
         parser.add_argument("api_key", required=True)
         parser.add_argument("user_id", required=False, type=int)
         parser.add_argument('sorted_by', required=False, choices=('popularity', 'novelty'))
+        parser.add_argument("limit", required=False, type=int)
+        parser.add_argument("offset", required=False, type=int)
         args = parser.parse_args()
         session = db_session.create_session()
         user_by_api = check_api_key(args['api_key'])
+        if args['limit'] is None:
+            args['limit'] = 20
+        if args['offset'] is None:
+            args['offset'] = 0
         if args['user_id'] == 0:
             args['user_id'] = user_by_api.id
         if args['habit_type'] == 'private':
@@ -117,16 +123,18 @@ class HabitListResource(Resource):
             if args['info_type'] == 'detail':
                 dict_habit = habit.to_dict(
                     only=('id', 'name', 'start_date', 'description', 'pluses', 'minuses', 'type', 'booting', 'weekdays',
-                          'notify_time', 'votes', 'reputation', 'muted', 'done'))
+                          'notify_time', 'votes', 'reputation', 'muted', 'done', 'user_id'))
             elif args['info_type'] == 'short':
                 dict_habit = habit.to_dict(
                     only=('id', 'name', 'type', 'booting', 'weekdays',
-                          'notify_time', 'reputation', 'muted', 'done'))
+                          'notify_time', 'reputation', 'muted', 'done', 'user_id'))
             current_user_vote = habit.check_user_vote(user_by_api.id)
             dict_habit['voted'] = current_user_vote['voted']
             dict_habit['vote_type'] = current_user_vote['vote_type']
             habits_list.append(dict_habit)
-        return jsonify({'habits': [habit for habit in habits_list]})
+        total_habits_len = len(habits_list)
+        next_offset = min(total_habits_len, args['offset'] + args['limit'])
+        return jsonify({'habits': [habit for habit in habits_list[args['offset']:next_offset]], 'nextOffset': f"{next_offset}"})
 
     def post(self):
         parser = reqparse.RequestParser()
