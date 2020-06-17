@@ -30,7 +30,7 @@ class HabitResource(Resource):
             abort(403, message='Invalid api key')
         return jsonify({'habit': habit.to_dict(
             only=('id', 'start_date', 'description', 'pluses', 'minuses', 'type', 'booting', 'weekdays',
-                  'notify_time', 'votes', 'reputation', 'muted', 'done'))})
+                  'notify_time', 'votes', 'reputation', 'muted', 'done', 'user_id'))})
 
     def put(self, id):
         parser = reqparse.RequestParser()
