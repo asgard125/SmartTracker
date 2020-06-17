@@ -234,6 +234,7 @@ class SignService : IntentService("SignService"){
                 habit.votes = habitJson.getInt(C.votes)
                 habit.reputation = habitJson.getInt(C.reputation)
                 habit.isBooting = habitJson.getBoolean(C.booting)
+                habit.isDone = habitJson.getBoolean(C.isDone)
                 habit.isPublic = habitJson.getString(C.type) == "public"
                 habit.isMuted = habitJson.getBoolean(C.muted)
                 habits.add(habit)

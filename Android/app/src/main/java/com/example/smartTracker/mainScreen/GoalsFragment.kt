@@ -12,7 +12,7 @@ class GoalsFragment : Fragment(){
     private lateinit var root : View
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        root = inflater.inflate(R.layout.single_fab_recycler, container, false)
+        root = inflater.inflate(R.layout.screen_in_progress, container, false)
         return root
     }
     

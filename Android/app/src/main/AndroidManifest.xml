@@ -30,6 +30,7 @@
         <service android:name=".mainScreen.habits.HabitsService"/>
         <service android:name=".mainScreen.rating.RatingService"/>
         <service android:name=".mainScreen.rating.ProfileService"/>
+        <service android:name=".mainScreen.mainScreen.MainScreenService"/>
 
         <receiver android:name=".mainScreen.habits.HabitsNotificationsReceiver"/>
         <receiver android:name=".DateUpdateReceiver"/>

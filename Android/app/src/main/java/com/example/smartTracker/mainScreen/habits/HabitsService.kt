@@ -33,6 +33,8 @@ class HabitsService : IntentService("HabitsService") {
             val channelName: CharSequence = "smart_tracker"
             val importance = NotificationManager.IMPORTANCE_HIGH
             val notificationChannel = NotificationChannel("123", channelName, importance)
+            notificationChannel.setSound(null, null)
+            notificationChannel.vibrationPattern = LongArray(0)
             notificationManager.createNotificationChannel(notificationChannel)
             builder.setChannelId(notificationChannel.id)
 
@@ -67,21 +69,23 @@ class HabitsService : IntentService("HabitsService") {
                     val responseJson = JSONObject(response.body?.string())
                     val habitsJsonArray = responseJson.getJSONArray(C.habits)
                     var habitJson : JSONObject
-                    val habitsReputation = ArrayList<Habit>()
+                    val serverHabits = ArrayList<Habit>()
                     var habit : Habit
                     for(i in 0 until habitsJsonArray.length()){
                         habit = Habit()
                         habitJson = habitsJsonArray.get(i) as JSONObject
                         habit.serverId = habitJson.getLong(C.ID)
+                        habit.isDone = habitJson.getBoolean(C.isDone)
                         habit.reputation = habitJson.getInt(C.reputation)
-                        habitsReputation.add(habit)
+                        serverHabits.add(habit)
                     }
                     Log.d("SmartTracker", "getAllHabits, sorting all habits by serverId")
                     habits.sortBy{ it.serverId }
-                    habitsReputation.sortBy{ it.serverId }
-                    for(i in 0 until habitsReputation.size){
-                        habits[i].serverId = habitsReputation[i].serverId
-                        habits[i].reputation = habitsReputation[i].reputation
+                    serverHabits.sortBy{ it.serverId }
+                    for(i in 0 until serverHabits.size){
+                        habits[i].serverId = serverHabits[i].serverId
+                        habits[i].isDone = serverHabits[i].isDone
+                        habits[i].reputation = serverHabits[i].reputation
                     }
                 }else{
                     Log.d("SmartTracker", "ProfileService, status code is $statusCode, message is ${response.message}")

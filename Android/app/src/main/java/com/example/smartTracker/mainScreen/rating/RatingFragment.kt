@@ -28,6 +28,8 @@ class RatingFragment : Fragment() {
     private lateinit var ratingRecycler : RecyclerView
     private lateinit var refreshLayout : SwipeRefreshLayout
 
+    private var currentUserId : Long = -1
+
     private lateinit var adapter : RatingAdapter
     private lateinit var filter : IntentFilter
     private var receiver = object : BroadcastReceiver(){
@@ -57,6 +59,8 @@ class RatingFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         root = inflater.inflate(R.layout.fragment_rating, container, false)
+
+        currentUserId = context?.getSharedPreferences(C.MAIN_PREFERENCES, Context.MODE_PRIVATE)?.getLong(C.ID, -1)!!
 
         refreshLayout = root.findViewById(R.id.RatingRefreshLayout)
         ratingRecycler = root.findViewById(R.id.RatingRecycler)
@@ -97,7 +101,7 @@ class RatingFragment : Fragment() {
 
             holder.positionText.text = user.ratingPlace.toString()
 
-            if(user.name != getString(R.string.you)){
+            if(user.userId != currentUserId){
                 val wordToSpan = SpannableString("${user.name}#${user.userId}")
                 val start = user.name.length
                 val end = wordToSpan.length
@@ -112,7 +116,7 @@ class RatingFragment : Fragment() {
             holder.ratingCountText.text = user.rating.toString()
 
             holder.itemView.setOnClickListener{
-                if(user.name != getString(R.string.you)){
+                if(user.userId != currentUserId){
                     val intent = Intent(context, ProfileActivity::class.java)
                     intent.putExtra(C.USER, user)
                     startActivity(intent)

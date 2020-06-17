@@ -72,6 +72,18 @@
     <string name="vote_error">You\'ve already voted for this habit</string>
     <string name="edit_habit_error">You can edit name, description, notification days of habit only the once every 7 days</string>
     <string name="create_new_habit">Create new habit?</string>
-    <string name="foreground_notification">Service is working...</string>
+    <string name="foreground_notification">Service is working…</string>
     <string name="copied_habit">Habit has been copied</string>
+    <string name="user">User</string>
+    <string name="hello_user_pattern">Hello %1$s!</string>
+    <string name="top_20">Top 20</string>
+    <string name="leaderboard">Leaderboard</string>
+    <string name="screen_in_development">Screen is in development</string>
+    <string name="best_habits">Best habits</string>
+    <string name="newest_habits">Newest habits</string>
+    <string name="vote_for_your_habit_error">You can\'t vote for your own habit</string>
+    <string-array name="types_of_leader_board">
+        <item>Best Habits</item>
+        <item>Newest Habits</item>
+    </string-array>
 </resources>

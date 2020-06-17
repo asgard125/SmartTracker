@@ -9,6 +9,8 @@ object C {
 
     //HTTP
     const val OK_CODE = 200
+    //rikko125r.pythonanywhere.com
+    //smarttracker.herokuapp.com
     const val OUT_SITE = "https://vk.com/greamteamdev"
     const val SIGN_UP_URL = "https://rikko125r.pythonanywhere.com/register"
     const val SIGN_IN_URL = "https://rikko125r.pythonanywhere.com/login"
@@ -95,7 +97,7 @@ object C {
     const val votes = "votes"
     const val reputation = "reputation"
     const val muted = "muted"
-    const val isDone = "isDone"
+    const val isDone = "done"
     const val serverId = "server_id"
     //Habits database
 
@@ -111,5 +113,12 @@ object C {
     const val UPDATED_POSITION = "UPDATED_POSITION"
 
     const val MAX_HABITS = 10
+
+    const val ACTION_MAIN_LEADERBOARD = "ACTION_MAIN_LEADERBOARD"
+    const val GET_LEADERBOARD_TASK = 7
+    const val SORTED_BY = "sorted_by"
+    const val POPULARITY = "popularity"
+    const val NOVELTY = "novelty"
+    const val sortType = "sortType"
 
 }

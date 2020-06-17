@@ -10,12 +10,12 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
-import androidx.core.view.get
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.example.smartTracker.DateUpdateReceiver
 import com.example.smartTracker.mainScreen.habits.HabitsFragment
 import com.example.smartTracker.R
+import com.example.smartTracker.mainScreen.mainScreen.MainFragment
 import com.example.smartTracker.mainScreen.rating.RatingFragment
 import com.example.smartTracker.objects.Database
 import com.google.android.material.navigation.NavigationView
@@ -58,7 +58,9 @@ class MainActivity : AppCompatActivity() {
         navigationView = findViewById(R.id.MainNavigation)
 
         if(savedInstanceState == null){
-            supportFragmentManager.beginTransaction().add(R.id.MainContainer, MainFragment()).commit()
+            supportFragmentManager.beginTransaction().add(R.id.MainContainer,
+                MainFragment()
+            ).commit()
             toolbar.title = getString(R.string.main_screen)
             navigationView.setCheckedItem(R.id.MainFragmentItem)
         }
@@ -75,7 +77,8 @@ class MainActivity : AppCompatActivity() {
             val selectedIndex : Int
             when(item.itemId){
                 R.id.MainFragmentItem ->{
-                    selectedFragment = MainFragment()
+                    selectedFragment =
+                        MainFragment()
                     selectedTitle = getString(R.string.main_screen)
                     selectedIndex = 0
                 }

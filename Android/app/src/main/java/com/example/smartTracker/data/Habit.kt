@@ -20,7 +20,8 @@ data class Habit(var id : Long = -1,
                  var isPublic : Boolean = true,
                  var isMuted : Boolean = true,
                  var isVoted : Boolean = false,
-                 var voteType : String = POSITIVE) : Parcelable{
+                 var voteType : String = POSITIVE,
+                 var userId : Long = -1) : Parcelable{
 
     companion object{
         const val POSITIVE = "positive"

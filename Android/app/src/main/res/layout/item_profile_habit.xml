@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView android:id="@+id/ProfileHabitItemCard"
+<androidx.cardview.widget.CardView
+    android:id="@+id/ProfileHabitItemCard"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -15,35 +16,36 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:id = "@+id/ProfileHabitTop"
+            android:id="@+id/ProfileHabitTop"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
+            android:baselineAligned="false"
             android:orientation="horizontal"
-            android:baselineAligned="false">
+            tools:background="?attr/selectableItemBackground">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginEnd="8dp"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
-                    android:id = "@+id/ProfileHabitName"
+                    android:id="@+id/ProfileHabitName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:clickable="false"
                     android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                    tools:text = "My habit"
-                    android:clickable="false"/>
+                    tools:text="My habit" />
 
                 <TextView
-                    android:id = "@+id/ProfileHabitReputation"
+                    android:id="@+id/ProfileHabitReputation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    tools:text = "Reputation : 45"
-                    android:clickable="false"/>
+                    android:clickable="false"
+                    tools:text="Reputation : 45" />
 
             </LinearLayout>
 
@@ -54,18 +56,18 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id = "@+id/ProfileHabitLikes"
+                    android:id="@+id/ProfileHabitLikes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
-                    android:src="@drawable/ic_like"/>
+                    android:src="@drawable/ic_like" />
 
                 <ImageView
-                    android:id = "@+id/ProfileHabitDislikes"
+                    android:id="@+id/ProfileHabitDislikes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="8dp"
                     android:layout_marginStart="16dp"
+                    android:padding="8dp"
                     android:src="@drawable/ic_dislike" />
 
             </LinearLayout>
@@ -80,7 +82,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:orientation="vertical"
-            android:visibility = "gone">
+            android:visibility = "visible">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -163,11 +165,17 @@
                     tools:text="Mo, Tu, We, Th, Fr, Sa, Su - 12:00" />
 
                 <ImageView
-                    android:id = "@+id/ProfileHabitCopyButton"
+                    android:id = "@+id/ProfileHabitUserButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
+                    android:src = "@drawable/ic_user"/>
+
+                <ImageView
+                    android:id = "@+id/ProfileHabitCopyButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
                     android:src = "@drawable/ic_copy"/>
 
             </LinearLayout>
