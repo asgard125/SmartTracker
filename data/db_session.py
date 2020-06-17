@@ -22,7 +22,7 @@ def global_init(db_file):
     conn_str = DATABASE_URL
     print(f"Подключение к базе данных по адресу {conn_str}")
 
-    engine = sa.create_engine(conn_str, echo=False, pool_class=NullPool)
+    engine = sa.create_engine(conn_str, echo=False, poolclass=NullPool)
     __factory = orm.sessionmaker(bind=engine)
 
     from . import __all_models
